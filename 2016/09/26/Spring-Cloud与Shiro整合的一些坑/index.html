@@ -1,0 +1,624 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="shiro," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="最近公司项目重构，需要使用Spring Cloud的技术栈，主要是看上了Hystrix断路器。但是呢，越是看似简单地东西，使用整合起来必定会遇到些坑。今天来讲讲Spring Cloud与Shiro整合遇到的一些坑
+1. ShiroProperties注入问题为了更符合Spring Cloud的设计方式（Spring Cloud Config可以统一管理配置），以ShiroProperties类的方">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Cloud与Shiro整合的一些坑">
+<meta property="og:url" content="https://zhangtao6483.github.io/2016/09/26/Spring-Cloud与Shiro整合的一些坑/index.html">
+<meta property="og:site_name" content="zhangtao`s blog">
+<meta property="og:description" content="最近公司项目重构，需要使用Spring Cloud的技术栈，主要是看上了Hystrix断路器。但是呢，越是看似简单地东西，使用整合起来必定会遇到些坑。今天来讲讲Spring Cloud与Shiro整合遇到的一些坑
+1. ShiroProperties注入问题为了更符合Spring Cloud的设计方式（Spring Cloud Config可以统一管理配置），以ShiroProperties类的方">
+<meta property="og:updated_time" content="2016-10-12T08:04:29.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring Cloud与Shiro整合的一些坑">
+<meta name="twitter:description" content="最近公司项目重构，需要使用Spring Cloud的技术栈，主要是看上了Hystrix断路器。但是呢，越是看似简单地东西，使用整合起来必定会遇到些坑。今天来讲讲Spring Cloud与Shiro整合遇到的一些坑
+1. ShiroProperties注入问题为了更符合Spring Cloud的设计方式（Spring Cloud Config可以统一管理配置），以ShiroProperties类的方">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="https://zhangtao6483.github.io/2016/09/26/Spring-Cloud与Shiro整合的一些坑/"/>
+
+
+  <title> Spring Cloud与Shiro整合的一些坑 | zhangtao`s blog </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-65246966-2', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">zhangtao`s blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">序员的业余生活</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Spring Cloud与Shiro整合的一些坑
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-09-26T11:04:23+08:00" content="2016-09-26">
+              2016-09-26
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/09/26/Spring-Cloud与Shiro整合的一些坑/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/09/26/Spring-Cloud与Shiro整合的一些坑/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近公司项目重构，需要使用Spring Cloud的技术栈，主要是看上了Hystrix断路器。但是呢，越是看似简单地东西，使用整合起来必定会遇到些坑。<br>今天来讲讲Spring Cloud与Shiro整合遇到的一些坑</p>
+<h1 id="1-ShiroProperties注入问题"><a href="#1-ShiroProperties注入问题" class="headerlink" title="1. ShiroProperties注入问题"></a>1. ShiroProperties注入问题</h1><p>为了更符合Spring Cloud的设计方式（Spring Cloud Config可以统一管理配置），以ShiroProperties类的方式加载Shiro配置<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ConfigurationProperties</span>(prefix = <span class="string">"shiro"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ShiroProperties</span> </span>&#123;</div><div class="line">	<span class="comment">/**</span></div><div class="line">	* Custom Realm</div><div class="line">	*/</div><div class="line">	<span class="keyword">private</span> Class&lt;? extends Realm&gt; realmClass = <span class="keyword">null</span>;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	* URL of login</div><div class="line">	*/</div><div class="line">	<span class="keyword">private</span> String loginUrl = <span class="string">"/login"</span>;</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * URL of success</div><div class="line">	 */</div><div class="line">	<span class="keyword">private</span> String successUrl = <span class="string">"/index"</span>;</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * URL of unauthorized</div><div class="line">	 */</div><div class="line">	<span class="keyword">private</span> String unauthorizedUrl = <span class="string">"/unauthorized"</span>;</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * filter chain</div><div class="line">	 */</div><div class="line">	<span class="keyword">private</span> Map&lt;String, String&gt; filterChainDefinitions;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * Shiro managed filters</div><div class="line">	 */</div><div class="line">	<span class="keyword">private</span> Map&lt;String, Class&lt;? extends Filter&gt;&gt; filters;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	*  get set ...</div><div class="line">	*/</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>因为需要配置<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 保证实现了Shiro内部lifecycle函数的bean执行</div><div class="line"> */</div><div class="line"><span class="meta">@Bean</span>(name = <span class="string">"lifecycleBeanPostProcessor"</span>)</div><div class="line"><span class="meta">@ConditionalOnMissingBean</span></div><div class="line"><span class="function"><span class="keyword">public</span> LifecycleBeanPostProcessor <span class="title">lifecycleBeanPostProcessor</span><span class="params">()</span> </span>&#123;</div><div class="line">	<span class="keyword">return</span> <span class="keyword">new</span> LifecycleBeanPostProcessor();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>LifecycleBeanPostProcessor保证Shiro内部有自己的Bean执行顺序，实现了Initializable接口的Shiro bean初始化时调用Initializable接口回调，在实现了Destroyable接口的Shiro bean销毁时调用 Destroyable接口回调。<br>使用ShiroProperties这种将配置交给Spring管理的方式，在Autowired注入的方法会在postProcessBeforeInitialization之后实例化注入properties属性，所以会在方法中get得到的properties的属性会为null。<br><strong>解决办法是：</strong><br>将LifecycleBeanPostProcessor的加载过程放在ShiroConfiguration，而将ShiroProperties的配置注入ShiroAutoConfiguration，ShiroAutoConfiguration也需要Import(ShiroConfiguration)<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="meta">@ConditionalOnWebApplication</span></div><div class="line"><span class="meta">@Import</span>(ShiroConfiguration.class)</div><div class="line"><span class="meta">@EnableConfigurationProperties</span>(ShiroProperties.class)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ShiroAutoConfiguration</span> </span>&#123;&#125;</div></pre></td></tr></table></figure></p>
+<h1 id="2-Realm-注入其他Service"><a href="#2-Realm-注入其他Service" class="headerlink" title="2. Realm 注入其他Service"></a>2. Realm 注入其他Service</h1><p>在Realm需要注入Feign提供的service，然而使用@Autowired这种方式注入会报错：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Error creating bean with name 'defaultServletHandlerMapping' defined in class path resource [org/springframework/boot/autoconfigure/web/WebMvcAutoConfiguration$EnableWebMvcConfiguration.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [org.springframework.web.servlet.HandlerMapping]: Factory method 'defaultServletHandlerMapping' threw exception; nested exception is java.lang.IllegalArgumentException: A ServletContext is required to configure default servlet handling</div></pre></td></tr></table></figure>
+<p>可以看到在初始化Spring Boot的default servlet之前发生的问题。<br><strong>解决的方式比较清奇：</strong><br>首先继承ApplicationContextInitializer，将Spring的ApplicationContext搞出来：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> org.springframework.context.ApplicationContext;</div><div class="line"><span class="keyword">import</span> org.springframework.context.ApplicationContextInitializer;</div><div class="line"><span class="keyword">import</span> org.springframework.context.ConfigurableApplicationContext;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServletInitializer</span> <span class="keyword">implements</span> <span class="title">ApplicationContextInitializer</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> ApplicationContext applicationContext;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initialize</span><span class="params">(ConfigurableApplicationContext applicationContext)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.applicationContext = applicationContext;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">getBean</span><span class="params">(Class&lt;T&gt; clazz)</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> applicationContext.getBean(clazz);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>然后再Main的Application中添加Initializer：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">	SpringApplication appliaction = <span class="keyword">new</span> SpringApplication(Application.class);</div><div class="line">	ServletInitializer servletInitializer = <span class="keyword">new</span> ServletInitializer();</div><div class="line">	appliaction.addInitializers(servletInitializer);</div><div class="line">	appliaction.run();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>最后再需要注入Service的地方这样得到：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">CustomerRemoteService customerRemoteService = (CustomerRemoteService) ServletInitializer</div><div class="line">				.getBean(CustomerRemoteService.class);</div></pre></td></tr></table></figure></p>
+<p>这里还不能使用类名小写得到，Feign会将远程Service以全类名的方式注入。<br>看来需要抽空看下Spring Cloud/Spring Boot初始化源码了。</p>
+<h1 id="3-AbstractSessionDAO"><a href="#3-AbstractSessionDAO" class="headerlink" title="3. AbstractSessionDAO"></a>3. AbstractSessionDAO</h1><p>以前的项目实现将Shiro共享缓存放入Redis中的时候RedisSessionDAO会继承AbstractSessionDAO，这样做在一次请求过来的时候回多次调用doCreate和doUpdate方法。<br><strong>解决方法：</strong> 继承CachingSessionDAO</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/shiro/" rel="tag">#shiro</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/09/27/Clean-Code小记/" rel="prev" title="Clean Code小记">
+                Clean Code小记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="zhangtao" />
+          <p class="site-author-name" itemprop="name">zhangtao</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhangtao6483" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-ShiroProperties注入问题"><span class="nav-number">1.</span> <span class="nav-text">1. ShiroProperties注入问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-Realm-注入其他Service"><span class="nav-number">2.</span> <span class="nav-text">2. Realm 注入其他Service</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-AbstractSessionDAO"><span class="nav-number">3.</span> <span class="nav-text">3. AbstractSessionDAO</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhangtao</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'https-zhangtao6483-github-io';
+      var disqus_identifier = '2016/09/26/Spring-Cloud与Shiro整合的一些坑/';
+      var disqus_title = "Spring Cloud与Shiro整合的一些坑";
+      var disqus_url = 'https://zhangtao6483.github.io/2016/09/26/Spring-Cloud与Shiro整合的一些坑/';
+
+      function run_disqus_script(disqus_script){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+      
+        run_disqus_script('embed.js');
+      
+    </script>
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
