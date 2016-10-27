@@ -5,7 +5,7 @@ email: 458411636@qq.com
 description: "序员的业余生活"
 keyword: ""
 url: "zhangtao6483.github.io"              # your host, for absolute URL
-baseurl: "/blog"         # for example, '/blog' if your blog hosted on 'host/blog'
+baseurl: ""         # for example, '/blog' if your blog hosted on 'host/blog'
 
 
 
