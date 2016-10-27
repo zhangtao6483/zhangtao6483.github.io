@@ -10,9 +10,9 @@
     <meta name="keyword"  content="">
     <link rel="shortcut icon" href="/img/favicon.ico">
 
-    <title>Spring Cloud与Shiro整合的一些坑 - </title>
+    <title>Clean Code笔记 - </title>
 
-    <link rel="canonical" href="http://localhost:4000/2016/10/27/springcloud-shiro/">
+    <link rel="canonical" href="http://localhost:4000/2016/10/27/cleancode/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -140,13 +140,15 @@
                 <div class="post-heading">
                     <div class="tags">
                         
-                        <a class="tag" href="/tags/#Spring" title="Spring">Spring</a>
+                        <a class="tag" href="/tags/#笔记" title="笔记">笔记</a>
+                        
+                        <a class="tag" href="/tags/#Clean Code" title="Clean Code">Clean Code</a>
                         
                     </div>
-                    <h1>Spring Cloud与Shiro整合的一些坑</h1>
+                    <h1>Clean Code笔记</h1>
                     
                     
-                    <h2 class="subheading"> "Can not understand"</h2>
+                    <h2 class="subheading"></h2>
                     
                     <span class="meta">Posted by zhangtao on October 27, 2016</span>
                 </div>
@@ -166,122 +168,111 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-				<p>最近公司项目重构，需要使用Spring Cloud的技术栈，主要是看上了Hystrix断路器。但是呢，越是看似简单地东西，使用整合起来必定会遇到些坑。
-今天来讲讲Spring Cloud与Shiro整合遇到的一些坑</p>
+				<p>最近看了遍Clean Code，感觉比较重要的是第七章：错误处理，第九章：单元测试，第十一章：并发编程和第十四章：逐步改进。</p>
 
-<h1 id="shiroproperties">1. ShiroProperties注入问题</h1>
+<h1 id="section">1. 错误处理</h1>
 
-<p>为了更符合Spring Cloud的设计方式（Spring Cloud Config可以统一管理配置），以ShiroProperties类的方式加载Shiro配置</p>
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@ConfigurationProperties</span><span class="o">(</span><span class="n">prefix</span> <span class="o">=</span> <span class="s">"shiro"</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ShiroProperties</span> <span class="o">{</span>
-	<span class="cm">/**
-	* Custom Realm
-	*/</span>
-	<span class="kd">private</span> <span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">Realm</span><span class="o">&gt;</span> <span class="n">realmClass</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+<h2 id="try-catchfinally">1.1 先写Try-Catch_Finally语句</h2>
+<p>异常的妙处之一是，它们在程序中定义了一个范围。执行try-catch-finally语句中try部分的代码时，你是在表明可随时取消执行，并在catch语句中接续。
+在某些意义上，try代码块就像是事务。catch代码块将程序维持在一种持续状态，无论try代码块中发生了什么均如此。所以在编写可能抛出异常的代码时，最好先写出try-catch-finally语句。</p>
 
-	<span class="cm">/**
-	* URL of login
-	*/</span>
-	<span class="kd">private</span> <span class="n">String</span> <span class="n">loginUrl</span> <span class="o">=</span> <span class="s">"/login"</span><span class="o">;</span>
-	<span class="cm">/**
-	 * URL of success
-	 */</span>
-	<span class="kd">private</span> <span class="n">String</span> <span class="n">successUrl</span> <span class="o">=</span> <span class="s">"/index"</span><span class="o">;</span>
-	<span class="cm">/**
-	 * URL of unauthorized
-	 */</span>
-	<span class="kd">private</span> <span class="n">String</span> <span class="n">unauthorizedUrl</span> <span class="o">=</span> <span class="s">"/unauthorized"</span><span class="o">;</span>
-	<span class="cm">/**
-	 * filter chain
-	 */</span>
-	<span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">filterChainDefinitions</span><span class="o">;</span>
+<h2 id="section-1">1.2 使用不可控异常</h2>
+<p>可控制异常的代价就是违反开放/闭合原则。如果你在方法中抛出可控异常，而catch语句在三个层级之上，你就得在catch语句和抛出异常处之间的每个方法签名中声明该异常。这意味着对软件中底层级的修改，都将波及较高层级的签名。修改好的模块必须重新构建、发布，即使它们自身所关注的任何东西都没改动过。</p>
 
-	<span class="cm">/**
-	 * Shiro managed filters
-	 */</span>
-	<span class="kd">private</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Class</span><span class="o">&lt;?</span> <span class="kd">extends</span> <span class="n">Filter</span><span class="o">&gt;&gt;</span> <span class="n">filters</span><span class="o">;</span>
+<h2 id="section-2">1.3 给出异常发生的环境说明</h2>
+<p>你抛出的每个异常，都应当提供足够的环境说明，以便判断错误的来源和处所。应创建信息充分的错误信息，并和异常一起传递出去。在消息中，包括失败的操作和失败类型。如果你的应用程序有日志系统，传递足够的信息给catch块，并记录下来。</p>
 
-	<span class="cm">/**
-	*  get set ...
-	*/</span>
-<span class="o">}</span>
-</code></pre>
-</div>
-
-<p>因为需要配置</p>
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
- * 保证实现了Shiro内部lifecycle函数的bean执行
- */</span>
-<span class="nd">@Bean</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"lifecycleBeanPostProcessor"</span><span class="o">)</span>
-<span class="nd">@ConditionalOnMissingBean</span>
-<span class="kd">public</span> <span class="n">LifecycleBeanPostProcessor</span> <span class="nf">lifecycleBeanPostProcessor</span><span class="o">()</span> <span class="o">{</span>
-	<span class="k">return</span> <span class="k">new</span> <span class="nf">LifecycleBeanPostProcessor</span><span class="o">();</span>
-<span class="o">}</span>
-</code></pre>
-</div>
-<p>LifecycleBeanPostProcessor保证Shiro内部有自己的Bean执行顺序，实现了Initializable接口的Shiro bean初始化时调用Initializable接口回调，在实现了Destroyable接口的Shiro bean销毁时调用 Destroyable接口回调。
-使用ShiroProperties这种将配置交给Spring管理的方式，在Autowired注入的方法会在postProcessBeforeInitialization之后实例化注入properties属性，所以会在方法中get得到的properties的属性会为null。
-<strong>解决办法是：</strong>
-将LifecycleBeanPostProcessor的加载过程放在ShiroConfiguration，而将ShiroProperties的配置注入ShiroAutoConfiguration，ShiroAutoConfiguration也需要Import(ShiroConfiguration)</p>
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@Configuration</span>
-<span class="nd">@ConditionalOnWebApplication</span>
-<span class="nd">@Import</span><span class="o">(</span><span class="n">ShiroConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
-<span class="nd">@EnableConfigurationProperties</span><span class="o">(</span><span class="n">ShiroProperties</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ShiroAutoConfiguration</span> <span class="o">{}</span>
-</code></pre>
-</div>
-
-<h1 id="realm-service">2. Realm 注入其他Service</h1>
-
-<p>在Realm需要注入Feign提供的service，然而使用@Autowired这种方式注入会报错：</p>
-
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Error</span> <span class="n">creating</span> <span class="n">bean</span> <span class="n">with</span> <span class="n">name</span> <span class="err">'</span><span class="n">defaultServletHandlerMapping</span><span class="err">'</span> <span class="n">defined</span> <span class="n">in</span> <span class="kd">class</span> <span class="nc">path</span> <span class="n">resource</span> <span class="o">[</span><span class="n">org</span><span class="o">/</span><span class="n">springframework</span><span class="o">/</span><span class="n">boot</span><span class="o">/</span><span class="n">autoconfigure</span><span class="o">/</span><span class="n">web</span><span class="o">/</span><span class="n">WebMvcAutoConfiguration$EnableWebMvcConfiguration</span><span class="o">.</span><span class="na">class</span><span class="o">]:</span> <span class="n">Bean</span> <span class="n">instantiation</span> <span class="n">via</span> <span class="n">factory</span> <span class="n">method</span> <span class="n">failed</span><span class="o">;</span> <span class="n">nested</span> <span class="n">exception</span> <span class="n">is</span> <span class="n">org</span><span class="o">.</span><span class="na">springframework</span><span class="o">.</span><span class="na">beans</span><span class="o">.</span><span class="na">BeanInstantiationException</span><span class="o">:</span> <span class="n">Failed</span> <span class="n">to</span> <span class="n">instantiate</span> <span class="o">[</span><span class="n">org</span><span class="o">.</span><span class="na">springframework</span><span class="o">.</span><span class="na">web</span><span class="o">.</span><span class="na">servlet</span><span class="o">.</span><span class="na">HandlerMapping</span><span class="o">]:</span> <span class="n">Factory</span> <span class="n">method</span> <span class="err">'</span><span class="n">defaultServletHandlerMapping</span><span class="err">'</span> <span class="n">threw</span> <span class="n">exception</span><span class="o">;</span> <span class="n">nested</span> <span class="n">exception</span> <span class="n">is</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">IllegalArgumentException</span><span class="o">:</span> <span class="n">A</span> <span class="n">ServletContext</span> <span class="n">is</span> <span class="n">required</span> <span class="n">to</span> <span class="n">configure</span> <span class="k">default</span> <span class="n">servlet</span> <span class="n">handling</span>
-</code></pre>
-</div>
-
-<p>可以看到在初始化Spring Boot的default servlet之前发生的问题。
-<strong>解决的方式比较清奇：</strong>
-首先继承ApplicationContextInitializer，将Spring的ApplicationContext搞出来：</p>
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.springframework.context.ApplicationContext</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.springframework.context.ApplicationContextInitializer</span><span class="o">;</span>
-<span class="kn">import</span> <span class="nn">org.springframework.context.ConfigurableApplicationContext</span><span class="o">;</span>
-
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ServletInitializer</span> <span class="kd">implements</span> <span class="n">ApplicationContextInitializer</span> <span class="o">{</span>
-
-	<span class="kd">private</span> <span class="kd">static</span> <span class="n">ApplicationContext</span> <span class="n">applicationContext</span><span class="o">;</span>
-
-	<span class="nd">@Override</span>
-	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">initialize</span><span class="o">(</span><span class="n">ConfigurableApplicationContext</span> <span class="n">applicationContext</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">this</span><span class="o">.</span><span class="na">applicationContext</span> <span class="o">=</span> <span class="n">applicationContext</span><span class="o">;</span>
-	<span class="o">}</span>
-
-	<span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">T</span> <span class="nf">getBean</span><span class="o">(</span><span class="n">Class</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">clazz</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">return</span> <span class="n">applicationContext</span><span class="o">.</span><span class="na">getBean</span><span class="o">(</span><span class="n">clazz</span><span class="o">);</span>
+<h2 id="null">1.4 别返回null值</h2>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">List</span><span class="o">&lt;</span><span class="n">Employee</span><span class="o">&gt;</span> <span class="n">employees</span> <span class="o">=</span> <span class="n">getEmployees</span><span class="o">();</span>
+<span class="k">if</span> <span class="o">(</span><span class="n">employees</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+	<span class="k">for</span><span class="o">(</span><span class="n">Employee</span> <span class="n">e</span> <span class="o">:</span> <span class="n">employees</span><span class="o">)</span> <span class="o">{</span>
+		<span class="n">totalPay</span> <span class="o">+=</span> <span class="n">e</span><span class="o">.</span><span class="na">getPay</span><span class="o">();</span>
 	<span class="o">}</span>
 <span class="o">}</span>
 </code></pre>
 </div>
-<p>然后再Main的Application中添加Initializer：</p>
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-	<span class="n">SpringApplication</span> <span class="n">appliaction</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SpringApplication</span><span class="o">(</span><span class="n">Application</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-	<span class="n">ServletInitializer</span> <span class="n">servletInitializer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ServletInitializer</span><span class="o">();</span>
-	<span class="n">appliaction</span><span class="o">.</span><span class="na">addInitializers</span><span class="o">(</span><span class="n">servletInitializer</span><span class="o">);</span>
-	<span class="n">appliaction</span><span class="o">.</span><span class="na">run</span><span class="o">();</span>
+<p>修改getEmployees()方法</p>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Employee</span><span class="o">&gt;</span> <span class="nf">getEmployees</span><span class="o">()</span> <span class="o">{</span>
+	<span class="k">if</span><span class="o">(</span> <span class="o">...</span> <span class="o">)</span> 
+		<span class="k">return</span> <span class="n">Collections</span><span class="o">.</span><span class="na">emptyList</span><span class="o">();</span>
 <span class="o">}</span>
 </code></pre>
 </div>
-<p>最后再需要注入Service的地方这样得到：</p>
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">CustomerRemoteService</span> <span class="n">customerRemoteService</span> <span class="o">=</span> <span class="o">(</span><span class="n">CustomerRemoteService</span><span class="o">)</span> <span class="n">ServletInitializer</span>
-				<span class="o">.</span><span class="na">getBean</span><span class="o">(</span><span class="n">CustomerRemoteService</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-</code></pre>
-</div>
-<p>这里还不能使用类名小写得到，Feign会将远程Service以全类名的方式注入。
-看来需要抽空看下Spring Cloud/Spring Boot初始化源码了。</p>
+<h2 id="null-1">1.5 别传递null值</h2>
 
-<h1 id="abstractsessiondao">3. AbstractSessionDAO</h1>
+<h1 id="section-3">2. 单元测试</h1>
 
-<p>以前的项目实现将Shiro共享缓存放入Redis中的时候RedisSessionDAO会继承AbstractSessionDAO，这样做在一次请求过来的时候回多次调用doCreate和doUpdate方法。
-<strong>解决方法：</strong> 继承CachingSessionDAO</p>
+<h2 id="tdd">2.1 TDD三定律</h2>
+<ol>
+  <li>在编写不能通过的单元测试前，不可编写生产代码</li>
+  <li>只可编写刚好无法通过的单元测试，不能编译也算不通过</li>
+  <li>只可编写刚好足以通过当前失败测试的生产代码</li>
+</ol>
+
+<h2 id="section-4">2.2 整洁的测试</h2>
+<p>构造-操作-检验（BUILD-OPERATE-CHECK）模式</p>
+<ul>
+  <li>第一个环节构造测试数据</li>
+  <li>第二个环节操作测试数据</li>
+  <li>第三个部分检验操作是否得到期望的结果</li>
+</ul>
+
+<h1 id="section-5">3. 并发编程</h1>
+
+<h2 id="section-6">3.1 为什么要并发</h2>
+<p><strong>并发是一种解耦策略。它帮助我们把做什么（目的）和何时（时机）做分解开。</strong>
+解耦的目的与时机能够明显地改进应用程序的吞吐量和结构。</p>
+
+<h2 id="section-7">3.2 并发防御原则</h2>
+<h3 id="section-8">3.2.1 单一权责原则</h3>
+<p>单一权责原则（SRP）认为，方法/类/组件应当只有一个修改的理由。并发设计自身足够复杂到成为修改的理由，所以也该从其他代码中分离出来。</p>
+<ul>
+  <li>并发相关代码有自己的开发、修改和调优生命周期</li>
+  <li>开发相关代码有自己要对付的挑战，和非并发相关代码不同，而且往往更为困难</li>
+  <li>即便没有周边应用程序增加的负担，写得不好的并发代码可能出错方式数量也已经足具挑战性</li>
+</ul>
+
+<h3 id="section-9">3.2.2 推论：限制数据作用域</h3>
+<p>采用synchronized在代码中保护一块使用共享对象的临界区（critical section）。限制临界区的数量很重要。更新共享数据的地方越多，就越可能：</p>
+<ul>
+  <li>你会忘记保护一个或多个临界区–破坏了修改共享数据的代码</li>
+  <li>得多花力气保证一切都受到有效防护</li>
+  <li>很难找到错误源，也很难判断错误源
+建议：谨记数据封装；严格限制对可能被共享的数据的访问</li>
+</ul>
+
+<h3 id="section-10">3.2.3 推论：使用数据副本</h3>
+<p>一开始就避免共享数据。在某些情况下，有可能复制对象并以只读方式对待。在另外的情况下，有可能复制对象，从多个线程收集所有副本的结果，并在单个线程中合并这些结果。</p>
+
+<h3 id="section-11">3.2.4 推论：线程应尽可能地独立</h3>
+<p>让每个线程在自己的世界中存在，不与其他线程共享数据
+建议：尝试将数据分解到可被独立线程操作的独立子集</p>
+
+<h2 id="section-12">3.3 了解执行模型</h2>
+
+<ul>
+  <li>限定资源：并发环境中有着固定尺寸或数量的资源。例如数据库连接和固定尺寸读/写缓存等</li>
+  <li>互斥：每一时刻仅有一个线程能访问共享数据或共享资源</li>
+  <li>线程饥饿：一个或一组线程在很长时间内或永久被禁止。例如，总是让执行得快的线程先运行，假如执行得快的线程没完没了，则执行时间长的线程就会“挨饿”</li>
+  <li>死锁：两个或多个线程互相等待执行结束。每个线程都拥有其他线程需要的资源，得不到其他线程拥有的资源，就无法终止</li>
+  <li>活锁：执行次序一致的线程，每个都想要起步，但发现其他线程已经“在路上”。由于竞步的原因，线程会持续尝试起步，但在很长时间内却无法如愿，甚至永远无法启动。</li>
+</ul>
+
+<h2 id="section-13">3.4 警惕同步方法之间的依赖</h2>
+<p>避免使用一个共享对象的多个方法</p>
+
+<h2 id="section-14">3.5 尽可能减小同步区域</h2>
+
+<h2 id="section-15">3.6 测试线程代码</h2>
+<ul>
+  <li>将伪失败看作可能的线程问题</li>
+  <li>先使非线程代码可工作</li>
+  <li>编写可插拔的线程代码</li>
+  <li>编写可调整的线程代码</li>
+  <li>运行多于处理器数量的线程</li>
+  <li>在不同平台上运行</li>
+  <li>调整代码并强迫错误发生</li>
+</ul>
 
 
                 <hr>
@@ -291,13 +282,9 @@
 
                 <ul class="pager">
                     
-                    <li class="previous">
-                        <a href="/2016/10/27/cleancode/" data-toggle="tooltip" data-placement="top" title="Clean Code笔记">&larr; Previous Post</a>
-                    </li>
-                    
                     
                     <li class="next">
-                        <a href="/2016/10/27/springnote-1/" data-toggle="tooltip" data-placement="top" title="Spring笔记（事件驱动模型）">Next Post &rarr;</a>
+                        <a href="/2016/10/27/springcloud-shiro/" data-toggle="tooltip" data-placement="top" title="Spring Cloud与Shiro整合的一些坑">Next Post &rarr;</a>
                     </li>
                     
                 </ul>
@@ -357,8 +344,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "https-zhangtao6483-github-io";
-    var disqus_identifier = "/2016/10/27/springcloud-shiro";
-    var disqus_url = "http://localhost:4000/2016/10/27/springcloud-shiro/";
+    var disqus_identifier = "/2016/10/27/cleancode";
+    var disqus_url = "http://localhost:4000/2016/10/27/cleancode/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

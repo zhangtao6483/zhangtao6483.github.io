@@ -125,4 +125,3 @@ CustomerRemoteService customerRemoteService = (CustomerRemoteService) ServletIni
 
 以前的项目实现将Shiro共享缓存放入Redis中的时候RedisSessionDAO会继承AbstractSessionDAO，这样做在一次请求过来的时候回多次调用doCreate和doUpdate方法。
 **解决方法：** 继承CachingSessionDAO
-shiro

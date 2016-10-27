@@ -154,6 +154,58 @@
             ">
     			
 <div class="post-preview">
+    <a href="/2016/10/27/springnote-2/">
+        <h2 class="post-title">
+            Spring笔记（AOP）
+        </h2>
+        
+        <div class="post-content-preview">
+            1. 代理模式
+
+
+  代理模式：为另一个对象提供一个替身或占位符以控制对这个对象的访问
+
+
+使用代理模式创建代表对象（representative），让代表对象控制某个对象的访问，被代理的对象可以是远程的对象、创建开销的大对象或需要安全控制的对象。
+
+
+
+Subject为RealSubject和Proxy提供了接口，通过实现同一接口，Proxy在RealSubject出现的地方取代它。
+R...
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by zhangtao on October 27, 2016
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2016/10/27/springnote-1/">
+        <h2 class="post-title">
+            Spring笔记（事件驱动模型）
+        </h2>
+        
+        <div class="post-content-preview">
+            事件驱动模型，也可以叫做观察者模式，或者发布/订阅模式。在Spring中，
+ApplicationContext继承了ApplicationEventPublisher实现事件机制
+
+1. 观察者模式
+
+
+  观察者模式定义了对象之间的一对多依赖，这样一来，当一个对象改变状态时，它的所有依赖者都会收到通知并自动更新
+
+
+发布消息的称为主题（Subject），订阅消息的被称为观察者（Obser...
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by zhangtao on October 27, 2016
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
     <a href="/2016/10/27/springcloud-shiro/">
         <h2 class="post-title">
             Spring Cloud与Shiro整合的一些坑
@@ -170,6 +222,28 @@
 1. ShiroProperties注入问题
 
 为了更符合Spring Cloud的设计方式（Spring Cloud Config可以统一管理配置），以ShiroProper...
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by zhangtao on October 27, 2016
+    </p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/2016/10/27/cleancode/">
+        <h2 class="post-title">
+            Clean Code笔记
+        </h2>
+        
+        <div class="post-content-preview">
+            最近看了遍Clean Code，感觉比较重要的是第七章：错误处理，第九章：单元测试，第十一章：并发编程和第十四章：逐步改进。
+
+1. 错误处理
+
+1.1 先写Try-Catch_Finally语句
+异常的妙处之一是，它们在程序中定义了一个范围。执行try-catch-finally语句中try部分的代码时，你是在表明可随时取消执行，并在catch语句中接续。
+在某些意义上，try代码块就像是...
         </div>
     </a>
     <p class="post-meta">
@@ -198,6 +272,14 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                         
+                            
+                        
+                            
+                        
+                            
+                                <a href="/tags/#Spring" title="Spring" rel="3">
+                                    Spring
+                                </a>
                             
                         
                     </div>
