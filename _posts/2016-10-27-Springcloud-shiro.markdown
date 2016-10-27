@@ -14,7 +14,8 @@ tags:
 
 # 1. ShiroProperties注入问题
 
-为了更符合Spring Cloud的设计方式（Spring Cloud Config可以统一管理配置），以ShiroProperties类的方式加载Shiro配置
+为了更符合Spring Cloud的设计方式（Spring Cloud Config可以统一管理配置），以ShiroProperties类的方式加载Shiro配置ss
+
 ```java
 @ConfigurationProperties(prefix = "shiro")
 public class ShiroProperties {
@@ -52,6 +53,7 @@ public class ShiroProperties {
 ```
 
 因为需要配置
+
 ```java
 /**
  * 保证实现了Shiro内部lifecycle函数的bean执行
@@ -62,10 +64,12 @@ public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
 	return new LifecycleBeanPostProcessor();
 }
 ```
+
 LifecycleBeanPostProcessor保证Shiro内部有自己的Bean执行顺序，实现了Initializable接口的Shiro bean初始化时调用Initializable接口回调，在实现了Destroyable接口的Shiro bean销毁时调用 Destroyable接口回调。
 使用ShiroProperties这种将配置交给Spring管理的方式，在Autowired注入的方法会在postProcessBeforeInitialization之后实例化注入properties属性，所以会在方法中get得到的properties的属性会为null。
 **解决办法是：**
 将LifecycleBeanPostProcessor的加载过程放在ShiroConfiguration，而将ShiroProperties的配置注入ShiroAutoConfiguration，ShiroAutoConfiguration也需要Import(ShiroConfiguration)
+
 ```java
 @Configuration
 @ConditionalOnWebApplication
@@ -85,6 +89,7 @@ Error creating bean with name 'defaultServletHandlerMapping' defined in class pa
 可以看到在初始化Spring Boot的default servlet之前发生的问题。
 **解决的方式比较清奇：**
 首先继承ApplicationContextInitializer，将Spring的ApplicationContext搞出来：
+
 ```java 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextInitializer;
@@ -104,7 +109,9 @@ public class ServletInitializer implements ApplicationContextInitializer {
 	}
 }
 ```
+
 然后再Main的Application中添加Initializer：
+
 ```java
 public static void main(String[] args) {
 	SpringApplication appliaction = new SpringApplication(Application.class);
@@ -114,10 +121,12 @@ public static void main(String[] args) {
 }
 ```
 最后再需要注入Service的地方这样得到：
+
 ```java
 CustomerRemoteService customerRemoteService = (CustomerRemoteService) ServletInitializer
 				.getBean(CustomerRemoteService.class);
 ```
+
 这里还不能使用类名小写得到，Feign会将远程Service以全类名的方式注入。
 看来需要抽空看下Spring Cloud/Spring Boot初始化源码了。
 

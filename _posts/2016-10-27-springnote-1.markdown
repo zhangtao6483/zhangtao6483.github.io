@@ -22,6 +22,7 @@ ApplicationContext继承了ApplicationEventPublisher实现事件机制
 观察者模式的实现：
 
 - 建立接口
+
 ```java
 public interface Subject {
 	public void registerObserver(Observer o);
@@ -35,6 +36,7 @@ public interface Observer {
 ```
 
 - 实现主题接口
+
 ```java
 public class ConcreteSubject implements Subject {
 
@@ -75,6 +77,7 @@ public class ConcreteSubject implements Subject {
 ```
 
 - 观察者接口
+
 ```java
 public class ConcreteObserver implements Observer {
 
@@ -98,6 +101,7 @@ public class ConcreteObserver implements Observer {
 ```
 
 - 写一个测试程序
+
 ```java
 public static void main(String[] args) {
 	ConcreteSubject subject = new ConcreteSubject();
@@ -106,6 +110,7 @@ public static void main(String[] args) {
 	subject.setTemp(2F);
 }
 ```
+
 Java API中由内置的观察者模式。java.util包内包含最基本的Observer接口与Observable类，和Subject接口和Observer接口很相似，甚至可以使用推(push)或拉(pull)方式传送数据
 
 # 2. Spring提供的事件驱动模型
@@ -124,6 +129,7 @@ Java API中由内置的观察者模式。java.util包内包含最基本的Observ
 简单实现一个Spring事件
 
 1. 实现自定义容器事件
+
 ```java
 public class MessageEvent extends ApplicationEvent {
 
@@ -149,6 +155,7 @@ public class MessageEvent extends ApplicationEvent {
 ```
 
 2. 实现事件监听器
+
 ```java
 public class MessageListener implements ApplicationListener {
 
@@ -164,6 +171,7 @@ public class MessageListener implements ApplicationListener {
 ```
 
 3. 将监听器写入配置文件
+
 ```xml
 <beans>
 	<bean class="com.event.MessageListener">
@@ -172,6 +180,7 @@ public class MessageListener implements ApplicationListener {
 ```
 
 4. 当系统创建Spring容器、加载Spring容器时会自动触发容器事件，容器事件监听器可以监听到这些事件。除此之外，程序也可以调用ApplicationContext的publishEvent()方法来主动触发一个容器事件，实现一个简单的例子：
+
 ```java
 public static void main(String[] args) {
 	ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
@@ -179,6 +188,7 @@ public static void main(String[] args) {
 	context.publishEvent(event);
 }
 ```
+
 如果Bean想发布事件，则Bean必须获得其容器的引用。如果程序中没有直接获取容器的引用，则应该让Bean实现ApplicationContextAware或者BeanFactoryAware接口，从而可以获得容器的引用。
 
 # 3. 实现方式
@@ -210,6 +220,7 @@ protected void initApplicationEventMulticaster() {
 	}
 }
 ```
+
 用户可以在配置文件中为容器定义一个继承ApplicationEventMulticaster的自定义的事件广播器，默认使用SimpleApplicationEventMulticaster作为事件广播器
 
 **注册事件监听器**
@@ -242,6 +253,7 @@ protected void registerListeners() {
 通过getBeanNamesForType方法得到继承ApplicationListener的Bean，将它们注册为容器的事件监听器，添加到事件广播器所提供的监听器注册表中。
 
 **发布事件**
+
 ```java
 // Multicast right now if possible - or lazily once the multicaster is initialized
 if (this.earlyApplicationEvents != null) {
@@ -283,6 +295,7 @@ public void multicastEvent(final ApplicationEvent event, ResolvableType eventTyp
 	}
 }
 ```
+
 事件发布方法，遍历注册的每个监听器，并启动来调用每个监听器的onApplicationEvent方法。
 由于SimpleApplicationEventMulticaster的taskExecutor的实现类是SyncTaskExecutor，因此，事件监听器对事件的处理，是同步进行的。
 从代码可以看出，applicationContext.publishEvent()方法，需要同步等待各个监听器处理完之后，才返回。
