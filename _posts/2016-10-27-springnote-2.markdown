@@ -89,7 +89,7 @@ public static void main(String[] args) {
 2. 被代理的类要求有public的构造函数(即没有显示的将其设置为private等)
 3. 被代理的类要求不是final
 
-## 1. 2 动态代理实现方式
+## 1.2 动态代理实现方式
 
 - JDK动态代理
 允许开发者在运行期创建接口的代理实例

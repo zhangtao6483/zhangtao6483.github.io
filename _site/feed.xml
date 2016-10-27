@@ -5,8 +5,8 @@
     <description>序员的业余生活</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Thu, 27 Oct 2016 12:26:40 +0800</pubDate>
-    <lastBuildDate>Thu, 27 Oct 2016 12:26:40 +0800</lastBuildDate>
+    <pubDate>Thu, 27 Oct 2016 12:38:15 +0800</pubDate>
+    <lastBuildDate>Thu, 27 Oct 2016 12:38:15 +0800</lastBuildDate>
     <generator>Jekyll v3.3.0</generator>
     
       <item>
@@ -94,7 +94,7 @@ RealSubject是真正做事的对象，它是被Proxy代理和控制的对象&lt;
   &lt;li&gt;被代理的类要求不是final&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h2 id=&quot;section-2&quot;&gt;1. 2 动态代理实现方式&lt;/h2&gt;
+&lt;h2 id=&quot;section-2&quot;&gt;1.2 动态代理实现方式&lt;/h2&gt;
 
 &lt;ul&gt;
   &lt;li&gt;
