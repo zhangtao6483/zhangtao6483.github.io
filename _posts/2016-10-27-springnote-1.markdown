@@ -4,6 +4,7 @@ title:      "Spring笔记（事件驱动模型）"
 date:       2016-10-27
 author:     "zhangtao"
 header-img: "img/home-bg.jpg"
+catalog: true
 tags:
     - Spring
 ---

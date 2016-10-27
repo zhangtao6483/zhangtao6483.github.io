@@ -182,96 +182,104 @@ ApplicationContext继承了ApplicationEventPublisher实现事件机制</p>
 <p>观察者模式的实现：</p>
 
 <ul>
-  <li>建立接口
-```java
-public interface Subject {
-  public void registerObserver(Observer o);
-  public void removeObserver(Observer o);
-  public void notifyObserver();
-}</li>
+  <li>建立接口</li>
 </ul>
 
-<p>public interface Observer {
-	public void update(float temp);
-}</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>
-- 实现主题接口
-```java
-public class ConcreteSubject implements Subject {
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Subject</span> <span class="o">{</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">registerObserver</span><span class="o">(</span><span class="n">Observer</span> <span class="n">o</span><span class="o">);</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">removeObserver</span><span class="o">(</span><span class="n">Observer</span> <span class="n">o</span><span class="o">);</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">notifyObserver</span><span class="o">();</span>
+<span class="o">}</span>
 
-	private ArrayList&lt;Observer&gt; observers;
-	private float temp;
-
-	public ConcreteSubject() {
-		observers = new ArrayList&lt;Observer&gt;();
-	}
-
-	public void registerObserver(Observer o) {
-		observers.add(o);
-	}
-
-	public void removeObserver(Observer o) {
-		int i = observers.indexOf(o);
-		if (i &gt;= 0) {
-			observers.remove(i);
-		}
-	}
-
-	public void notifyObserver() {
-		for (int i = 0; i &lt; observers.size(); i++) {
-			Observer observer = observers.get(i);
-			observer.update(temp);
-		}
-	}
-
-	public void subjectChanged() {
-		notifyObserver();
-	}
-
-	public void setTemp(float temp) {
-		this.temp = temp;
-		subjectChanged();
-	}
-}
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Observer</span> <span class="o">{</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">update</span><span class="o">(</span><span class="kt">float</span> <span class="n">temp</span><span class="o">);</span>
+<span class="o">}</span>
 </code></pre>
 </div>
 
 <ul>
-  <li>观察者接口
-    <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ConcreteObserver</span> <span class="kd">implements</span> <span class="n">Observer</span> <span class="o">{</span>
-
-  <span class="kd">private</span> <span class="kt">float</span> <span class="n">temp</span><span class="o">;</span>
-  <span class="kd">private</span> <span class="n">Subject</span> <span class="n">subject</span><span class="o">;</span>
-
-  <span class="kd">public</span> <span class="nf">ConcreteObserver</span><span class="o">(</span><span class="n">Subject</span> <span class="n">subject</span><span class="o">)</span> <span class="o">{</span>
-      <span class="k">this</span><span class="o">.</span><span class="na">subject</span> <span class="o">=</span> <span class="n">subject</span><span class="o">;</span>
-      <span class="n">subject</span><span class="o">.</span><span class="na">registerObserver</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
-  <span class="o">}</span>
-
-  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">update</span><span class="o">(</span><span class="kt">float</span> <span class="n">temp</span><span class="o">)</span> <span class="o">{</span>
-      <span class="k">this</span><span class="o">.</span><span class="na">temp</span> <span class="o">=</span> <span class="n">temp</span><span class="o">;</span>
-      <span class="n">display</span><span class="o">();</span>
-  <span class="o">}</span>
-
-  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">display</span><span class="o">()</span> <span class="o">{</span>
-      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"temp : "</span> <span class="o">+</span> <span class="n">temp</span><span class="o">);</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre>
-    </div>
-  </li>
-  <li>写一个测试程序
-    <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-  <span class="n">ConcreteSubject</span> <span class="n">subject</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConcreteSubject</span><span class="o">();</span>
-  <span class="n">ConcreteObserver</span> <span class="n">observer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConcreteObserver</span><span class="o">(</span><span class="n">subject</span><span class="o">);</span>
-  <span class="n">subject</span><span class="o">.</span><span class="na">setTemp</span><span class="o">(</span><span class="mi">1</span><span class="n">F</span><span class="o">);</span>
-  <span class="n">subject</span><span class="o">.</span><span class="na">setTemp</span><span class="o">(</span><span class="mi">2</span><span class="n">F</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre>
-    </div>
-    <p>Java API中由内置的观察者模式。java.util包内包含最基本的Observer接口与Observable类，和Subject接口和Observer接口很相似，甚至可以使用推(push)或拉(pull)方式传送数据</p>
-  </li>
+  <li>实现主题接口</li>
 </ul>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ConcreteSubject</span> <span class="kd">implements</span> <span class="n">Subject</span> <span class="o">{</span>
+
+	<span class="kd">private</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Observer</span><span class="o">&gt;</span> <span class="n">observers</span><span class="o">;</span>
+	<span class="kd">private</span> <span class="kt">float</span> <span class="n">temp</span><span class="o">;</span>
+
+	<span class="kd">public</span> <span class="nf">ConcreteSubject</span><span class="o">()</span> <span class="o">{</span>
+		<span class="n">observers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Observer</span><span class="o">&gt;();</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">registerObserver</span><span class="o">(</span><span class="n">Observer</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
+		<span class="n">observers</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">o</span><span class="o">);</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">removeObserver</span><span class="o">(</span><span class="n">Observer</span> <span class="n">o</span><span class="o">)</span> <span class="o">{</span>
+		<span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">observers</span><span class="o">.</span><span class="na">indexOf</span><span class="o">(</span><span class="n">o</span><span class="o">);</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">observers</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">notifyObserver</span><span class="o">()</span> <span class="o">{</span>
+		<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">observers</span><span class="o">.</span><span class="na">size</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+			<span class="n">Observer</span> <span class="n">observer</span> <span class="o">=</span> <span class="n">observers</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
+			<span class="n">observer</span><span class="o">.</span><span class="na">update</span><span class="o">(</span><span class="n">temp</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">subjectChanged</span><span class="o">()</span> <span class="o">{</span>
+		<span class="n">notifyObserver</span><span class="o">();</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setTemp</span><span class="o">(</span><span class="kt">float</span> <span class="n">temp</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">temp</span> <span class="o">=</span> <span class="n">temp</span><span class="o">;</span>
+		<span class="n">subjectChanged</span><span class="o">();</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<ul>
+  <li>观察者接口</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ConcreteObserver</span> <span class="kd">implements</span> <span class="n">Observer</span> <span class="o">{</span>
+
+	<span class="kd">private</span> <span class="kt">float</span> <span class="n">temp</span><span class="o">;</span>
+	<span class="kd">private</span> <span class="n">Subject</span> <span class="n">subject</span><span class="o">;</span>
+
+	<span class="kd">public</span> <span class="nf">ConcreteObserver</span><span class="o">(</span><span class="n">Subject</span> <span class="n">subject</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">subject</span> <span class="o">=</span> <span class="n">subject</span><span class="o">;</span>
+		<span class="n">subject</span><span class="o">.</span><span class="na">registerObserver</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">update</span><span class="o">(</span><span class="kt">float</span> <span class="n">temp</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">temp</span> <span class="o">=</span> <span class="n">temp</span><span class="o">;</span>
+		<span class="n">display</span><span class="o">();</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">display</span><span class="o">()</span> <span class="o">{</span>
+		<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"temp : "</span> <span class="o">+</span> <span class="n">temp</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<ul>
+  <li>写一个测试程序</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+	<span class="n">ConcreteSubject</span> <span class="n">subject</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConcreteSubject</span><span class="o">();</span>
+	<span class="n">ConcreteObserver</span> <span class="n">observer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConcreteObserver</span><span class="o">(</span><span class="n">subject</span><span class="o">);</span>
+	<span class="n">subject</span><span class="o">.</span><span class="na">setTemp</span><span class="o">(</span><span class="mi">1</span><span class="n">F</span><span class="o">);</span>
+	<span class="n">subject</span><span class="o">.</span><span class="na">setTemp</span><span class="o">(</span><span class="mi">2</span><span class="n">F</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>Java API中由内置的观察者模式。java.util包内包含最基本的Observer接口与Observable类，和Subject接口和Observer接口很相似，甚至可以使用推(push)或拉(pull)方式传送数据</p>
 
 <h1 id="spring">2. Spring提供的事件驱动模型</h1>
 
@@ -290,63 +298,74 @@ public class ConcreteSubject implements Subject {
 <p>简单实现一个Spring事件</p>
 
 <ol>
-  <li>实现自定义容器事件
-    <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MessageEvent</span> <span class="kd">extends</span> <span class="n">ApplicationEvent</span> <span class="o">{</span>
-
- <span class="kd">private</span> <span class="n">String</span> <span class="n">message</span><span class="o">;</span>
-
- <span class="kd">public</span> <span class="nf">MessageEvent</span><span class="o">(</span><span class="n">Object</span> <span class="n">source</span><span class="o">,</span> <span class="n">String</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
-     <span class="kd">super</span><span class="o">(</span><span class="n">source</span><span class="o">);</span>
-     <span class="k">this</span><span class="o">.</span><span class="na">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">;</span>
- <span class="o">}</span>
-
- <span class="kd">public</span> <span class="nf">MessageEvent</span><span class="o">(</span><span class="n">Object</span> <span class="n">source</span><span class="o">)</span> <span class="o">{</span>
-     <span class="kd">super</span><span class="o">(</span><span class="n">source</span><span class="o">);</span>
- <span class="o">}</span>
-
- <span class="kd">public</span> <span class="n">String</span> <span class="nf">getMessage</span><span class="o">()</span> <span class="o">{</span>
-     <span class="k">return</span> <span class="n">message</span><span class="o">;</span>
- <span class="o">}</span>
-
- <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setText</span><span class="o">(</span><span class="n">String</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
-     <span class="k">this</span><span class="o">.</span><span class="na">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">;</span>
- <span class="o">}</span>
-<span class="o">}</span>
-</code></pre>
-    </div>
-  </li>
-  <li>实现事件监听器
-    <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MessageListener</span> <span class="kd">implements</span> <span class="n">ApplicationListener</span> <span class="o">{</span>
-
- <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onApplicationEvent</span><span class="o">(</span><span class="n">ApplicationEvent</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
-     <span class="k">if</span> <span class="o">(</span><span class="n">event</span> <span class="k">instanceof</span> <span class="n">MessageEvent</span><span class="o">)</span> <span class="o">{</span>
-         <span class="n">MessageEvent</span> <span class="n">messageEvent</span> <span class="o">=</span> <span class="o">(</span><span class="n">MessageEvent</span><span class="o">)</span> <span class="n">event</span><span class="o">;</span>
-         <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">messageEvent</span><span class="o">.</span><span class="na">getMessage</span><span class="o">());</span>
-     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-         <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">event</span><span class="o">);</span>
-     <span class="o">}</span>
- <span class="o">}</span>
-<span class="o">}</span>
-</code></pre>
-    </div>
-  </li>
-  <li>将监听器写入配置文件
-```xml</li>
+  <li>实现自定义容器事件</li>
 </ol>
-<beans>
-	<bean class="com.event.MessageListener">
-	</bean>
-</beans>
-<div class="highlighter-rouge"><pre class="highlight"><code>
-4. 当系统创建Spring容器、加载Spring容器时会自动触发容器事件，容器事件监听器可以监听到这些事件。除此之外，程序也可以调用ApplicationContext的publishEvent()方法来主动触发一个容器事件，实现一个简单的例子：
-```java
-public static void main(String[] args) {
-	ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
-	MessageEvent event = new MessageEvent("hello");
-	context.publishEvent(event);
-}
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MessageEvent</span> <span class="kd">extends</span> <span class="n">ApplicationEvent</span> <span class="o">{</span>
+
+	<span class="kd">private</span> <span class="n">String</span> <span class="n">message</span><span class="o">;</span>
+
+	<span class="kd">public</span> <span class="nf">MessageEvent</span><span class="o">(</span><span class="n">Object</span> <span class="n">source</span><span class="o">,</span> <span class="n">String</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
+		<span class="kd">super</span><span class="o">(</span><span class="n">source</span><span class="o">);</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">;</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="nf">MessageEvent</span><span class="o">(</span><span class="n">Object</span> <span class="n">source</span><span class="o">)</span> <span class="o">{</span>
+		<span class="kd">super</span><span class="o">(</span><span class="n">source</span><span class="o">);</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="n">String</span> <span class="nf">getMessage</span><span class="o">()</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="n">message</span><span class="o">;</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setText</span><span class="o">(</span><span class="n">String</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
 </code></pre>
 </div>
+
+<ol>
+  <li>实现事件监听器</li>
+</ol>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MessageListener</span> <span class="kd">implements</span> <span class="n">ApplicationListener</span> <span class="o">{</span>
+
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onApplicationEvent</span><span class="o">(</span><span class="n">ApplicationEvent</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">event</span> <span class="k">instanceof</span> <span class="n">MessageEvent</span><span class="o">)</span> <span class="o">{</span>
+			<span class="n">MessageEvent</span> <span class="n">messageEvent</span> <span class="o">=</span> <span class="o">(</span><span class="n">MessageEvent</span><span class="o">)</span> <span class="n">event</span><span class="o">;</span>
+			<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">messageEvent</span><span class="o">.</span><span class="na">getMessage</span><span class="o">());</span>
+		<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+			<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">event</span><span class="o">);</span>
+		<span class="o">}</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<ol>
+  <li>将监听器写入配置文件</li>
+</ol>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;beans&gt;</span>
+	<span class="nt">&lt;bean</span> <span class="na">class=</span><span class="s">"com.event.MessageListener"</span><span class="nt">&gt;</span>
+	<span class="nt">&lt;/bean&gt;</span>
+<span class="nt">&lt;/beans&gt;</span>
+</code></pre>
+</div>
+
+<ol>
+  <li>当系统创建Spring容器、加载Spring容器时会自动触发容器事件，容器事件监听器可以监听到这些事件。除此之外，程序也可以调用ApplicationContext的publishEvent()方法来主动触发一个容器事件，实现一个简单的例子：</li>
+</ol>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+	<span class="n">ApplicationContext</span> <span class="n">context</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ClassPathXmlApplicationContext</span><span class="o">(</span><span class="s">"applicationContext.xml"</span><span class="o">);</span>
+	<span class="n">MessageEvent</span> <span class="n">event</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MessageEvent</span><span class="o">(</span><span class="s">"hello"</span><span class="o">);</span>
+	<span class="n">context</span><span class="o">.</span><span class="na">publishEvent</span><span class="o">(</span><span class="n">event</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
 <p>如果Bean想发布事件，则Bean必须获得其容器的引用。如果程序中没有直接获取容器的引用，则应该让Bean实现ApplicationContextAware或者BeanFactoryAware接口，从而可以获得容器的引用。</p>
 
 <h1 id="section-1">3. 实现方式</h1>
@@ -378,6 +397,7 @@ public static void main(String[] args) {
 <span class="o">}</span>
 </code></pre>
 </div>
+
 <p>用户可以在配置文件中为容器定义一个继承ApplicationEventMulticaster的自定义的事件广播器，默认使用SimpleApplicationEventMulticaster作为事件广播器</p>
 
 <p><strong>注册事件监听器</strong></p>
@@ -410,6 +430,7 @@ public static void main(String[] args) {
 <p>通过getBeanNamesForType方法得到继承ApplicationListener的Bean，将它们注册为容器的事件监听器，添加到事件广播器所提供的监听器注册表中。</p>
 
 <p><strong>发布事件</strong></p>
+
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="c1">// Multicast right now if possible - or lazily once the multicaster is initialized</span>
 <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="na">earlyApplicationEvents</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
 	<span class="k">this</span><span class="o">.</span><span class="na">earlyApplicationEvents</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">applicationEvent</span><span class="o">);</span>
@@ -451,6 +472,7 @@ public static void main(String[] args) {
 <span class="o">}</span>
 </code></pre>
 </div>
+
 <p>事件发布方法，遍历注册的每个监听器，并启动来调用每个监听器的onApplicationEvent方法。
 由于SimpleApplicationEventMulticaster的taskExecutor的实现类是SyncTaskExecutor，因此，事件监听器对事件的处理，是同步进行的。
 从代码可以看出，applicationContext.publishEvent()方法，需要同步等待各个监听器处理完之后，才返回。

@@ -4,6 +4,7 @@ title:      "Clean Code笔记"
 date:       2016-10-27
 author:     "zhangtao"
 header-img: "img/home-bg.jpg"
+catalog: true
 tags:
     - 笔记
     - Clean Code
