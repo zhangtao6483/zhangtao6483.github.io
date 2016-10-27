@@ -5,8 +5,8 @@
     <description>序员的业余生活</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Thu, 27 Oct 2016 11:35:59 +0800</pubDate>
-    <lastBuildDate>Thu, 27 Oct 2016 11:35:59 +0800</lastBuildDate>
+    <pubDate>Thu, 27 Oct 2016 12:21:08 +0800</pubDate>
+    <lastBuildDate>Thu, 27 Oct 2016 12:21:08 +0800</lastBuildDate>
     <generator>Jekyll v3.3.0</generator>
     
       <item>
@@ -19,7 +19,7 @@
 
 &lt;p&gt;使用代理模式创建代表对象（representative），让代表对象控制某个对象的访问，被代理的对象可以是远程的对象、创建开销的大对象或需要安全控制的对象。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/img/in-post/proxy.png&quot; alt=&quot;proxy&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/img/in-post/proxy.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Subject为RealSubject和Proxy提供了接口，通过实现同一接口，Proxy在RealSubject出现的地方取代它。
 RealSubject是真正做事的对象，它是被Proxy代理和控制的对象&lt;/p&gt;
@@ -28,7 +28,7 @@ RealSubject是真正做事的对象，它是被Proxy代理和控制的对象&lt;
 
 &lt;p&gt;java.lang.reflect包支持动态代理，动态代理是指运行时才将代理的类创建出来&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/invoke/proxy.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/img/in-post/invoke.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Proxy是由Java产生的，而且实现了完整的Subject接口
 实现InvocationHandler，Proxy上任何方法调用都会被传入此类。InvocationHandler控制对RealSubject方法的访问，在实现invoke()方法的时候加上我们的代理逻辑。&lt;/p&gt;
@@ -142,7 +142,7 @@ ApplicationContext继承了ApplicationEventPublisher实现事件机制&lt;/p&gt;
 
 &lt;p&gt;发布消息的称为&lt;strong&gt;主题&lt;/strong&gt;（Subject），订阅消息的被称为&lt;strong&gt;观察者&lt;/strong&gt;（Observer）&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/observer.png&quot; alt=&quot;observer&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/img/in-post/observer.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;观察者模式的实现：&lt;/p&gt;
 
@@ -240,7 +240,7 @@ public class ConcreteSubject implements Subject {
 
 &lt;h1 id=&quot;spring&quot;&gt;2. Spring提供的事件驱动模型&lt;/h1&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/spring_event.png&quot; alt=&quot;event&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/img/in-post/spring_event.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;事件驱动的模型如上图，其中：&lt;/p&gt;
 &lt;ul&gt;

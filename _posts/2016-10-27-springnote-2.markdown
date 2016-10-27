@@ -15,7 +15,7 @@ tags:
 
 使用代理模式创建代表对象（representative），让代表对象控制某个对象的访问，被代理的对象可以是远程的对象、创建开销的大对象或需要安全控制的对象。
 
-![proxy](/img/in-post/proxy.png)
+![](/img/in-post/proxy.png)
 
 Subject为RealSubject和Proxy提供了接口，通过实现同一接口，Proxy在RealSubject出现的地方取代它。
 RealSubject是真正做事的对象，它是被Proxy代理和控制的对象
@@ -24,7 +24,7 @@ RealSubject是真正做事的对象，它是被Proxy代理和控制的对象
 
 java.lang.reflect包支持动态代理，动态代理是指运行时才将代理的类创建出来
 
-![](/invoke/proxy.png)
+![](/img/in-post/invoke.png)
 
 Proxy是由Java产生的，而且实现了完整的Subject接口
 实现InvocationHandler，Proxy上任何方法调用都会被传入此类。InvocationHandler控制对RealSubject方法的访问，在实现invoke()方法的时候加上我们的代理逻辑。

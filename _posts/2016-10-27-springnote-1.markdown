@@ -17,7 +17,7 @@ ApplicationContext继承了ApplicationEventPublisher实现事件机制
 
 发布消息的称为**主题**（Subject），订阅消息的被称为**观察者**（Observer）
 
-![observer](/images/observer.png)
+![](/img/in-post/observer.png)
 
 观察者模式的实现：
 
@@ -110,7 +110,7 @@ Java API中由内置的观察者模式。java.util包内包含最基本的Observ
 
 # 2. Spring提供的事件驱动模型
 
-![event](/images/spring_event.png)
+![](/img/in-post/spring_event.png)
 
 事件驱动的模型如上图，其中：
 - ApplicationEvent
