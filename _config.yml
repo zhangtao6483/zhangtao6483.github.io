@@ -48,6 +48,7 @@ kramdown:
 # Disqus settings
 disqus_username: https-zhangtao6483-github-io
 
+
 # Duoshuo settings
 # duoshuo_username: 
 # Share component is depend on Comment so we can NOT use share only.
