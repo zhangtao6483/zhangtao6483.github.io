@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Java中的函数式 - 3 λ表达式"
+title:      "Java中的函数式 - 3 Lambda表达式"
 date:       2018-07-01
 author:     "zhangtao"
 header-img: "img/post-bg-2018-1.jpg"
