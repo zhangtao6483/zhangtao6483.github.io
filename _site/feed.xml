@@ -3,11 +3,109 @@
   <channel>
     <title>Zhangtao`s Blog</title>
     <description>序员的业余生活</description>
-    <link>http://localhost:4000/</link>
-    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Sun, 01 Jul 2018 03:06:44 +0800</pubDate>
-    <lastBuildDate>Sun, 01 Jul 2018 03:06:44 +0800</lastBuildDate>
+    <link>zhangtao6483.github.io/</link>
+    <atom:link href="zhangtao6483.github.io/feed.xml" rel="self" type="application/rss+xml" />
+    <pubDate>Tue, 03 Jul 2018 00:25:38 +0800</pubDate>
+    <lastBuildDate>Tue, 03 Jul 2018 00:25:38 +0800</lastBuildDate>
     <generator>Jekyll v3.8.3</generator>
+    
+      <item>
+        <title>Java中的函数式 - 3 Lambda表达式</title>
+        <description>&lt;h1 id=&quot;1-lambda表达式&quot;&gt;1. Lambda表达式&lt;/h1&gt;
+
+&lt;p&gt;Lambda表达式的主要应用有两个：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;构造一个匿名函数（anonymous function）&lt;/li&gt;
+  &lt;li&gt;对于对于柯里化函数，在不给定前一个参数的前提下给定后一个&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;11-基本语法&quot;&gt;1.1 基本语法&lt;/h2&gt;
+
+&lt;p&gt;Lambda表达式有三个部分：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/in-post/function_3_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;参数列表：这里使用了Comparator中compare方法的参数&lt;/li&gt;
+  &lt;li&gt;箭头：箭头-&amp;gt;把参数列表与Lambda主体分隔开&lt;/li&gt;
+  &lt;li&gt;Lambda主体：比较两个Apple的重量&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Lambda的基本语法是&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;	&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parameters&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;expression&lt;/span&gt;
+ &lt;span class=&quot;err&quot;&gt;或&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;请注意语句的花括号&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parameters&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;statements&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;之前&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;Comparator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Apple&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;byWeight&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Comparator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Apple&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;compare&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Apple&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Apple&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;){&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getWeight&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;compareTo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getWeight&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;使用了Lambda表达式后：&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;Comparator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Apple&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;byWeight&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Apple&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Apple&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getWeight&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;compareTo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getWeight&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;12-使用示例&quot;&gt;1.2 使用示例&lt;/h2&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;使用案例&lt;/th&gt;
+      &lt;th&gt;Lambda示例&lt;/th&gt;
+      &lt;th&gt;对应函数式接口&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;布尔表达式&lt;/td&gt;
+      &lt;td&gt;(List&lt;String&gt; list) -&amp;gt; list.isEmpty()&lt;/String&gt;&lt;/td&gt;
+      &lt;td&gt;Predicate&amp;lt;List&lt;String&gt;&amp;gt;&lt;/String&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;创建对象&lt;/td&gt;
+      &lt;td&gt;() -&amp;gt; new Apple(10)&lt;/td&gt;
+      &lt;td&gt;Supplier&lt;Apple&gt;&lt;/Apple&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;消费一个对象&lt;/td&gt;
+      &lt;td&gt;(Apple a) -&amp;gt;  {&lt;br /&gt;System.out.println(a.getWeight());&lt;br /&gt;}&lt;/td&gt;
+      &lt;td&gt;Consumer&lt;Apple&gt;&lt;/Apple&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;从一个对象中选择/抽取&lt;/td&gt;
+      &lt;td&gt;(String s) -&amp;gt; s.length()&lt;/td&gt;
+      &lt;td&gt;Function&amp;lt;String, Integer&amp;gt;或&lt;br /&gt;ToIntFunction&lt;String&gt;&lt;/String&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;组合两个值&lt;/td&gt;
+      &lt;td&gt;(int a, int b) -&amp;gt; a * b&lt;/td&gt;
+      &lt;td&gt;IntBinaryOperator&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;比较两个对象&lt;/td&gt;
+      &lt;td&gt;(Apple a1, Apple a2) -&amp;gt;&lt;br /&gt;a1.getWeight().compareTo(a2.getWeight())&lt;/td&gt;
+      &lt;td&gt;Comparator&lt;Apple&gt;或 &lt;br /&gt;BiFunction&amp;lt;Apple, Apple, Integer&amp;gt; 或 &lt;br /&gt;ToIntBiFunction&amp;lt;Apple, Apple&amp;gt;&lt;/Apple&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+</description>
+        <pubDate>Sun, 01 Jul 2018 00:00:00 +0800</pubDate>
+        <link>zhangtao6483.github.io/2018/07/01/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-3-Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F/</link>
+        <guid isPermaLink="true">zhangtao6483.github.io/2018/07/01/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-3-Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F/</guid>
+        
+        <category>函数式</category>
+        
+        
+      </item>
     
       <item>
         <title>Java中的函数式 - 2 高阶函数</title>
@@ -112,8 +210,8 @@
 
 </description>
         <pubDate>Sat, 30 Jun 2018 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/2018/06/30/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-1-%E9%AB%98%E9%98%B6%E5%87%BD%E6%95%B0/</link>
-        <guid isPermaLink="true">http://localhost:4000/2018/06/30/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-1-%E9%AB%98%E9%98%B6%E5%87%BD%E6%95%B0/</guid>
+        <link>zhangtao6483.github.io/2018/06/30/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-2-%E9%AB%98%E9%98%B6%E5%87%BD%E6%95%B0/</link>
+        <guid isPermaLink="true">zhangtao6483.github.io/2018/06/30/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-2-%E9%AB%98%E9%98%B6%E5%87%BD%E6%95%B0/</guid>
         
         <category>函数式</category>
         
@@ -294,8 +392,8 @@ java中可以使用for-each循环： for(Apple a : apples) {}&lt;br /&gt;
 坏消息是，目前Java还不支持这种优化。所以应该尽量使用Stream取代迭代操作。&lt;/p&gt;
 </description>
         <pubDate>Fri, 29 Jun 2018 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/2018/06/29/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-1-%E5%87%BD%E6%95%B0%E5%BC%8F%E7%9A%84%E6%80%9D%E8%80%83/</link>
-        <guid isPermaLink="true">http://localhost:4000/2018/06/29/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-1-%E5%87%BD%E6%95%B0%E5%BC%8F%E7%9A%84%E6%80%9D%E8%80%83/</guid>
+        <link>zhangtao6483.github.io/2018/06/29/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-1-%E5%87%BD%E6%95%B0%E5%BC%8F%E7%9A%84%E6%80%9D%E8%80%83/</link>
+        <guid isPermaLink="true">zhangtao6483.github.io/2018/06/29/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-1-%E5%87%BD%E6%95%B0%E5%BC%8F%E7%9A%84%E6%80%9D%E8%80%83/</guid>
         
         <category>函数式</category>
         
@@ -605,8 +703,8 @@ ApplicationContext继承了ApplicationEventPublisher实现事件机制&lt;/p&gt;
 也就是说，Spring提供的事件机制，默认是同步的。如果想用异步的，可以自己实现ApplicationEventMulticaster。&lt;/p&gt;
 </description>
         <pubDate>Thu, 27 Oct 2016 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/2016/10/27/springnote-1/</link>
-        <guid isPermaLink="true">http://localhost:4000/2016/10/27/springnote-1/</guid>
+        <link>zhangtao6483.github.io/2016/10/27/springnote-1/</link>
+        <guid isPermaLink="true">zhangtao6483.github.io/2016/10/27/springnote-1/</guid>
         
         <category>Spring</category>
         
@@ -720,8 +818,8 @@ ApplicationContext继承了ApplicationEventPublisher实现事件机制&lt;/p&gt;
 &lt;/ul&gt;
 </description>
         <pubDate>Thu, 27 Oct 2016 00:00:00 +0800</pubDate>
-        <link>http://localhost:4000/2016/10/27/cleancode/</link>
-        <guid isPermaLink="true">http://localhost:4000/2016/10/27/cleancode/</guid>
+        <link>zhangtao6483.github.io/2016/10/27/cleancode/</link>
+        <guid isPermaLink="true">zhangtao6483.github.io/2016/10/27/cleancode/</guid>
         
         <category>笔记</category>
         
