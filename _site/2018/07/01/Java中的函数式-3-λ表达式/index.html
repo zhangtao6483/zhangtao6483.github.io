@@ -10,7 +10,7 @@
     <meta name="keywords"  content="">
     <meta name="theme-color" content="">
     
-    <title></title>
+    <title>Java中的函数式 - 3 λ表达式 - </title>
 
     <!-- Web App Manifest -->
     <link rel="manifest" href="/pwa/manifest.json">
@@ -19,7 +19,7 @@
     <link rel="shortcut icon" href="/img/favicon.ico">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="zhangtao6483.github.io/">
+    <link rel="canonical" href="zhangtao6483.github.io/2018/07/01/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-3-%CE%BB%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -149,254 +149,271 @@
 </script>
 
 
-    <!-- Page Header -->
-<header class="intro-header" style="background-image: url('/img/home-bg.jpg')">
+    <!-- Image to hack wechat -->
+<!-- <img src="/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="/img/post-bg-2018-1.jpg" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        position: relative;
+        background-image: url('/img/post-bg-2018-1.jpg')
+    }
+
+    
+</style>
+<header class="intro-header" >
+    <div class="header-mask"></div>
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
-                <div class="site-heading">
-                    <h1>Zhangtao`s Blog</h1>
-                    <!--<hr class="small">-->
-                    <span class="subheading">序员的业余生活</span>
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/#函数式" title="函数式">函数式</a>
+                        
+                    </div>
+                    <h1>Java中的函数式 - 3 λ表达式</h1>
+                    
+                    
+                    <h2 class="subheading"></h2>
+                    
+                    <span class="meta">Posted by zhangtao on July 1, 2018</span>
                 </div>
             </div>
         </div>
     </div>
 </header>
 
-<!-- Main Content -->
-<div class="container">
-	<div class="row">
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+				<h1 id="1-λ表达式">1. λ表达式</h1>
+
+<p>λ表达式的主要应用有两个：</p>
+
+<ul>
+  <li>构造一个匿名函数（anonymous function）</li>
+  <li>对于对于柯里化函数，在不给定前一个参数的前提下给定后一个</li>
+</ul>
+
+<h2 id="11-基本语法">1.1 基本语法</h2>
+
+<p>Lambda表达式有三个部分：</p>
+
+<p><img src="/img/in-post/function_3_1.png" alt="" /></p>
+
+<ul>
+  <li>参数列表：这里使用了Comparator中compare方法的参数</li>
+  <li>箭头：箭头-&gt;把参数列表与Lambda主体分隔开</li>
+  <li>Lambda主体：比较两个Apple的重量</li>
+</ul>
+
+<p>Lambda的基本语法是</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>	<span class="o">(</span><span class="n">parameters</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">expression</span>
+ <span class="err">或</span><span class="o">(</span><span class="err">请注意语句的花括号</span><span class="o">)</span>
+	<span class="o">(</span><span class="n">parameters</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span> <span class="n">statements</span><span class="o">;</span> <span class="o">}</span>
+</code></pre></div></div>
+
+<p>之前</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Comparator</span><span class="o">&lt;</span><span class="n">Apple</span><span class="o">&gt;</span> <span class="n">byWeight</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Comparator</span><span class="o">&lt;</span><span class="n">Apple</span><span class="o">&gt;()</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">compare</span><span class="o">(</span><span class="n">Apple</span> <span class="n">a1</span><span class="o">,</span> <span class="n">Apple</span> <span class="n">a2</span><span class="o">){</span>
+<span class="k">return</span> <span class="n">a1</span><span class="o">.</span><span class="na">getWeight</span><span class="o">().</span><span class="na">compareTo</span><span class="o">(</span><span class="n">a2</span><span class="o">.</span><span class="na">getWeight</span><span class="o">());</span>
+<span class="o">};</span>
+</code></pre></div></div>
+
+<p>使用了Lambda表达式后：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Comparator</span><span class="o">&lt;</span><span class="n">Apple</span><span class="o">&gt;</span> <span class="n">byWeight</span> <span class="o">=</span>
+	<span class="o">(</span><span class="n">Apple</span> <span class="n">a1</span><span class="o">,</span> <span class="n">Apple</span> <span class="n">a2</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">a1</span><span class="o">.</span><span class="na">getWeight</span><span class="o">().</span><span class="na">compareTo</span><span class="o">(</span><span class="n">a2</span><span class="o">.</span><span class="na">getWeight</span><span class="o">());</span>
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>使用案例</th>
+      <th>Lambda示例</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>布尔表达式</td>
+      <td>(List<String> list) -&gt; list.isEmpty()</String></td>
+    </tr>
+    <tr>
+      <td>创建对象</td>
+      <td>() -&gt; new Apple(10)</td>
+    </tr>
+    <tr>
+      <td>消费一个对象</td>
+      <td>(Apple a) -&gt;  {<br />System.out.println(a.getWeight());<br />}</td>
+    </tr>
+    <tr>
+      <td>从一个对象中选择/抽取</td>
+      <td>(String s) -&gt; s.length()</td>
+    </tr>
+    <tr>
+      <td>组合两个值</td>
+      <td>(int a, int b) -&gt; a * b</td>
+    </tr>
+    <tr>
+      <td>比较两个对象</td>
+      <td>(Apple a1, Apple a2) -&gt;<br />a1.getWeight().compareTo(a2.getWeight())</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+                <hr style="visibility: hidden;">
+
+                
+
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2018/06/30/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-2-%E9%AB%98%E9%98%B6%E5%87%BD%E6%95%B0/" data-toggle="tooltip" data-placement="top" title="Java中的函数式 - 2 高阶函数">
+                        Previous<br>
+                        <span>Java中的函数式 - 2 高阶函数</span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+
+
+                
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+            </div>  
+
+    <!-- Side Catalog Container -->
+        
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
         
 
-<!-- USE SIDEBAR -->
-    <!-- PostList Container -->
-    		<div class="
-                col-lg-8 col-lg-offset-1
-                col-md-8 col-md-offset-1
-                col-sm-12
-                col-xs-12
-                postlist-container
-            ">
-    			
-<div class="post-preview">
-    <a href="/2018/07/01/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-3-%CE%BB%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
-        <h2 class="post-title">
-            Java中的函数式 - 3 λ表达式
-        </h2>
-        
-        <div class="post-content-preview">
-            1. λ表达式
-
-λ表达式的主要应用有两个：
-
-
-  构造一个匿名函数（anonymous function）
-  对于对于柯里化函数，在不给定前一个参数的前提下给定后一个
-
-
-1.1 基本语法
-
-Lambda表达式有三个部分：
-
-
-
-
-  参数列表：这里使用了Comparator中compare方法的参数
-  箭头：箭头-&gt;把参数列表与Lambda主体分隔开
-  Lambda主体：比...
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by zhangtao on July 1, 2018
-    </p>
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="/2018/06/30/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-2-%E9%AB%98%E9%98%B6%E5%87%BD%E6%95%B0/">
-        <h2 class="post-title">
-            Java中的函数式 - 2 高阶函数
-        </h2>
-        
-        <div class="post-content-preview">
-            1. 高阶函数
-
-高阶函数:以其他函数为参数的函数，或者以函数作为结果返回的函数称为高阶函数。
-
-由于以函数作为返回结果只是柯里化函数的特点而已，所以高阶函数常常仅特指那些以函数为参数的函数。
-
-eg：高阶函数常常是一些有共同特点的函数的抽象：
-
-1.1 in haskell
-
--- 列表中所有数字的平方
-power2 :: Num a =&gt; [a] -&gt; [a]
-power2 ...
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by zhangtao on June 30, 2018
-    </p>
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="/2018/06/29/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-1-%E5%87%BD%E6%95%B0%E5%BC%8F%E7%9A%84%E6%80%9D%E8%80%83/">
-        <h2 class="post-title">
-            Java中的函数式 - 1 函数式的思考
-        </h2>
-        
-        <div class="post-content-preview">
-            1. 函数式编程
-
-1.1 共享的可变数据
-
-
-  共享的数据结构可能被代码多个方法读取和更新
-  使用共享可变数据增加系统的复杂度，难以追踪程序各个组成部分发生的变化，会造成并发导致的缺陷
-
-
-无副作用：如果一个方法既不修改它内嵌类的状态，也不修改其他对象的状态，使用return返回所有的计算结构。
-
-使用不可变对象实现无副作用，不可变对象是这样一种对象，它们一旦完成初始化就不会被任何方法...
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by zhangtao on June 29, 2018
-    </p>
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="/2016/10/27/springnote-1/">
-        <h2 class="post-title">
-            Spring笔记（事件驱动模型）
-        </h2>
-        
-        <div class="post-content-preview">
-            事件驱动模型，也可以叫做观察者模式，或者发布/订阅模式。在Spring中，
-ApplicationContext继承了ApplicationEventPublisher实现事件机制
-
-1. 观察者模式
-
-
-  观察者模式定义了对象之间的一对多依赖，这样一来，当一个对象改变状态时，它的所有依赖者都会收到通知并自动更新
-
-
-发布消息的称为主题（Subject），订阅消息的被称为观察者（Obser...
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by zhangtao on October 27, 2016
-    </p>
-</div>
-<hr>
-
-<div class="post-preview">
-    <a href="/2016/10/27/cleancode/">
-        <h2 class="post-title">
-            Clean Code笔记
-        </h2>
-        
-        <div class="post-content-preview">
-            最近看了遍Clean Code，感觉比较重要的是第七章：错误处理，第九章：单元测试，第十一章：并发编程和第十四章：逐步改进。
-
-1. 错误处理
-
-1.1 先写Try-Catch_Finally语句
-异常的妙处之一是，它们在程序中定义了一个范围。执行try-catch-finally语句中try部分的代码时，你是在表明可随时取消执行，并在catch语句中接续。
-在某些意义上，try代码块就像是...
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by zhangtao on October 27, 2016
-    </p>
-</div>
-<hr>
-
-
-<!-- Pager -->
-
-
-    		</div>
     <!-- Sidebar Container -->
             <div class="
-                col-lg-3 col-lg-offset-0
-                col-md-3 col-md-offset-0
-                col-sm-12
-                col-xs-12
-                sidebar-container
-            ">
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
                 <!-- Featured Tags -->
                 
                 <section>
                     <hr class="hidden-sm hidden-xs">
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
-                        
+        				
                             
-                        
+        				
                             
-                        
+        				
                             
-                        
+        				
                             
-                                <a href="/tags/#函数式" title="函数式" rel="3">
+                				<a href="/tags/#函数式" title="函数式" rel="3">
                                     函数式
                                 </a>
                             
-                        
-                    </div>
+        				
+        			</div>
                 </section>
                 
 
-                <!-- Short About -->
-                <section class="visible-md visible-lg">
-                    <hr><h5><a href="/about/">ABOUT ME</a></h5>
-                    <div class="short-about">
-                        
-                            <img src="/img/avatar.jpg" />
-                        
-                        
-                            <p>Hello World</p>
-                        
-                        <!-- SNS Link -->
-                        <ul class="list-inline">
-                            
-                            
-                            
-                            
-                            <li>
-                                <a target="_blank" href="http://weibo.com/2679937147">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fa fa-circle fa-stack-2x"></i>
-                                        <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </li>
-                            
-                            
-                            
-                            <li>
-                                <a target="_blank" href="https://github.com/zhangtao6483">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fa fa-circle fa-stack-2x"></i>
-                                        <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </li>
-                            
-                            
-                        </ul>
-                    </div>
-                </section>
                 <!-- Friends Blog -->
                 
-    		</div>
-        
-	</div>
-</div>
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "https-zhangtao6483-github-io";
+    var disqus_identifier = "/2018/07/01/Java中的函数式 - 3 λ表达式";
+    var disqus_url = "zhangtao6483.github.io/2018/07/01/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-3-%CE%BB%E8%A1%A8%E8%BE%BE%E5%BC%8F/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("//cdnjs.cloudflare.com/ajax/libs/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
 
 
     <!-- Footer -->
@@ -543,6 +560,50 @@ ApplicationContext继承了ApplicationEventPublisher实现事件机制
 
 
 <!-- Side Catalog -->
+
+<script type="text/javascript">
+    function generateCatalog (selector) {
+        var P = $('div.post-container'),a,n,t,l,i,c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#"+$(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="'+i+'" rel="nofollow">'+t+'</a>');
+            l = $('<li class="'+n+'_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;    
+    }
+
+    generateCatalog(".catalog-body");
+
+    // toggle side catalog
+    $(".catalog-toggle").click((function(e){
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    /*
+     * Doc: https://github.com/davist11/jQuery-One-Page-Nav
+     * Fork by Hux to support padding
+     */
+    async("/js/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
 
 
 
