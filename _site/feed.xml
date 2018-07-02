@@ -5,8 +5,8 @@
     <description>序员的业余生活</description>
     <link>zhangtao6483.github.io/</link>
     <atom:link href="zhangtao6483.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 02 Jul 2018 19:48:22 +0800</pubDate>
-    <lastBuildDate>Mon, 02 Jul 2018 19:48:22 +0800</lastBuildDate>
+    <pubDate>Mon, 02 Jul 2018 22:44:41 +0800</pubDate>
+    <lastBuildDate>Mon, 02 Jul 2018 22:44:41 +0800</lastBuildDate>
     <generator>Jekyll v3.8.3</generator>
     
       <item>
@@ -53,37 +53,46 @@
 	&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Apple&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Apple&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getWeight&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;compareTo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getWeight&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
+&lt;p&gt;&lt;strong&gt;Lambda使用案例&lt;/strong&gt;&lt;/p&gt;
+
 &lt;table&gt;
   &lt;thead&gt;
     &lt;tr&gt;
       &lt;th&gt;使用案例&lt;/th&gt;
       &lt;th&gt;Lambda示例&lt;/th&gt;
+      &lt;th&gt;对应函数式接口&lt;/th&gt;
     &lt;/tr&gt;
   &lt;/thead&gt;
   &lt;tbody&gt;
     &lt;tr&gt;
       &lt;td&gt;布尔表达式&lt;/td&gt;
       &lt;td&gt;(List&lt;String&gt; list) -&amp;gt; list.isEmpty()&lt;/String&gt;&lt;/td&gt;
+      &lt;td&gt;Predicate&amp;lt;List&lt;String&gt;&amp;gt;&lt;/String&gt;&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
       &lt;td&gt;创建对象&lt;/td&gt;
       &lt;td&gt;() -&amp;gt; new Apple(10)&lt;/td&gt;
+      &lt;td&gt;Supplier&lt;Apple&gt;&lt;/Apple&gt;&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
       &lt;td&gt;消费一个对象&lt;/td&gt;
       &lt;td&gt;(Apple a) -&amp;gt;  {&lt;br /&gt;System.out.println(a.getWeight());&lt;br /&gt;}&lt;/td&gt;
+      &lt;td&gt;Consumer&lt;Apple&gt;&lt;/Apple&gt;&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
       &lt;td&gt;从一个对象中选择/抽取&lt;/td&gt;
       &lt;td&gt;(String s) -&amp;gt; s.length()&lt;/td&gt;
+      &lt;td&gt;Function&amp;lt;String, Integer&amp;gt;或&lt;br /&gt;ToIntFunction&lt;String&gt;&lt;/String&gt;&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
       &lt;td&gt;组合两个值&lt;/td&gt;
       &lt;td&gt;(int a, int b) -&amp;gt; a * b&lt;/td&gt;
+      &lt;td&gt;IntBinaryOperator&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
       &lt;td&gt;比较两个对象&lt;/td&gt;
       &lt;td&gt;(Apple a1, Apple a2) -&amp;gt;&lt;br /&gt;a1.getWeight().compareTo(a2.getWeight())&lt;/td&gt;
+      &lt;td&gt;Comparator&lt;Apple&gt;或 &lt;br /&gt;BiFunction&amp;lt;Apple, Apple, Integer&amp;gt; 或 &lt;br /&gt;ToIntBiFunction&amp;lt;Apple, Apple&amp;gt;&lt;/Apple&gt;&lt;/td&gt;
     &lt;/tr&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;

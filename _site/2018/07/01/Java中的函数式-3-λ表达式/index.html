@@ -238,37 +238,46 @@
 	<span class="o">(</span><span class="n">Apple</span> <span class="n">a1</span><span class="o">,</span> <span class="n">Apple</span> <span class="n">a2</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">a1</span><span class="o">.</span><span class="na">getWeight</span><span class="o">().</span><span class="na">compareTo</span><span class="o">(</span><span class="n">a2</span><span class="o">.</span><span class="na">getWeight</span><span class="o">());</span>
 </code></pre></div></div>
 
+<p><strong>Lambda使用案例</strong></p>
+
 <table>
   <thead>
     <tr>
       <th>使用案例</th>
       <th>Lambda示例</th>
+      <th>对应函数式接口</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td>布尔表达式</td>
       <td>(List<String> list) -&gt; list.isEmpty()</String></td>
+      <td>Predicate&lt;List<String>&gt;</String></td>
     </tr>
     <tr>
       <td>创建对象</td>
       <td>() -&gt; new Apple(10)</td>
+      <td>Supplier<Apple></Apple></td>
     </tr>
     <tr>
       <td>消费一个对象</td>
       <td>(Apple a) -&gt;  {<br />System.out.println(a.getWeight());<br />}</td>
+      <td>Consumer<Apple></Apple></td>
     </tr>
     <tr>
       <td>从一个对象中选择/抽取</td>
       <td>(String s) -&gt; s.length()</td>
+      <td>Function&lt;String, Integer&gt;或<br />ToIntFunction<String></String></td>
     </tr>
     <tr>
       <td>组合两个值</td>
       <td>(int a, int b) -&gt; a * b</td>
+      <td>IntBinaryOperator</td>
     </tr>
     <tr>
       <td>比较两个对象</td>
       <td>(Apple a1, Apple a2) -&gt;<br />a1.getWeight().compareTo(a2.getWeight())</td>
+      <td>Comparator<Apple>或 <br />BiFunction&lt;Apple, Apple, Integer&gt; 或 <br />ToIntBiFunction&lt;Apple, Apple&gt;</Apple></td>
     </tr>
   </tbody>
 </table>
