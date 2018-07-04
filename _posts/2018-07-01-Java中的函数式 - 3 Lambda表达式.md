@@ -39,8 +39,16 @@ eg: 函数f(x)= x + 2可以用lambda演算表示为λx.x + 2<br>
 进一步，可以使用柯里化的方法，将多参数的函数转换成为多个中介函数的复合链，每个中介函数都只接受一个参数。
 ![](/img/in-post/function_3_4.svg)
 
+## 1.2 形式化定义
 
-## 1.2 归约
+<img src="/img/in-post/function_3_8.png" width="57%" height="57%">
+
+1. ⟨Constant⟩⟩ 意为常量，如布尔类型中的 True 与 False 还有数字等，也可以是加法、 减法等函数。
+2. ⟨V ariable⟩ 为变量名称，可以使用任何的字符串来代指一个变量，但是约定使用小写字 母，而大写字母用来指代一整个的 λ 表达式。
+3. ⟨Expression⟩⟨Expression⟩ 相当于读者了解的函数应用(function application)。由于 我们一般只使用单个字母或者加数字下标的字母比如x,y,a1,b2 来表示变量名，所以在 函数应用时我们可以省略函数与参数中间的空格。
+4. λ⟨V ariable⟩.⟨Expression⟩ 则为 λ 函数定义，称为λ 抽象(λ abstraction)。
+
+## 1.3 归约
 
 ### α-替换
 

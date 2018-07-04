@@ -246,7 +246,18 @@ Lambda演算包括了建构lambda项，和对lambda项运行归约的操作。�
 <p>进一步，可以使用柯里化的方法，将多参数的函数转换成为多个中介函数的复合链，每个中介函数都只接受一个参数。
 <img src="/img/in-post/function_3_4.svg" alt="" /></p>
 
-<h2 id="12-归约">1.2 归约</h2>
+<h2 id="12-形式化定义">1.2 形式化定义</h2>
+
+<p><img src="/img/in-post/function_3_8.png" width="57%" height="57%" /></p>
+
+<ol>
+  <li>⟨Constant⟩⟩ 意为常量，如布尔类型中的 True 与 False 还有数字等，也可以是加法、 减法等函数。</li>
+  <li>⟨V ariable⟩ 为变量名称，可以使用任何的字符串来代指一个变量，但是约定使用小写字 母，而大写字母用来指代一整个的 λ 表达式。</li>
+  <li>⟨Expression⟩⟨Expression⟩ 相当于读者了解的函数应用(function application)。由于 我们一般只使用单个字母或者加数字下标的字母比如x,y,a1,b2 来表示变量名，所以在 函数应用时我们可以省略函数与参数中间的空格。</li>
+  <li>λ⟨V ariable⟩.⟨Expression⟩ 则为 λ 函数定义，称为λ 抽象(λ abstraction)。</li>
+</ol>
+
+<h2 id="13-归约">1.3 归约</h2>
 
 <h3 id="α-替换">α-替换</h3>
 
@@ -449,6 +460,13 @@ Lambda演算包括了建构lambda项，和对lambda项运行归约的操作。�
                     </li>
                     
                     
+                    <li class="next">
+                        <a href="/2018/07/05/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-4-%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC/" data-toggle="tooltip" data-placement="top" title="Java中的函数式 - 4 惰性求值">
+                        Next<br>
+                        <span>Java中的函数式 - 4 惰性求值</span>
+                        </a>
+                    </li>
+                    
                 </ul>
 
 
@@ -501,7 +519,7 @@ Lambda演算包括了建构lambda项，和对lambda项运行归约的操作。�
                             
         				
                             
-                				<a href="/tags/#函数式" title="函数式" rel="3">
+                				<a href="/tags/#函数式" title="函数式" rel="4">
                                     函数式
                                 </a>
                             
