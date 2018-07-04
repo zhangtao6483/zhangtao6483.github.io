@@ -5,22 +5,98 @@
     <description>序员的业余生活</description>
     <link>zhangtao6483.github.io/</link>
     <atom:link href="zhangtao6483.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Tue, 03 Jul 2018 00:25:38 +0800</pubDate>
-    <lastBuildDate>Tue, 03 Jul 2018 00:25:38 +0800</lastBuildDate>
+    <pubDate>Wed, 04 Jul 2018 14:19:58 +0800</pubDate>
+    <lastBuildDate>Wed, 04 Jul 2018 14:19:58 +0800</lastBuildDate>
     <generator>Jekyll v3.8.3</generator>
     
       <item>
         <title>Java中的函数式 - 3 Lambda表达式</title>
         <description>&lt;h1 id=&quot;1-lambda表达式&quot;&gt;1. Lambda表达式&lt;/h1&gt;
 
+&lt;p&gt;&lt;a href=&quot;https://zh.wikipedia.org/wiki/%CE%9B%E6%BC%94%E7%AE%97&quot;&gt;wikipedia&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Lambda演算包括了一条变换规则（变量替换）和一条将函数抽象化定义的方式。&lt;br /&gt;
+Lambda演算包括了建构lambda项，和对lambda项运行归约的操作。最基本的Lambda演算规则：&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;语法&lt;/th&gt;
+      &lt;th&gt;名称&lt;/th&gt;
+      &lt;th&gt;描述&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;x&lt;/td&gt;
+      &lt;td&gt;变量&lt;/td&gt;
+      &lt;td&gt;表示参数或数学/逻辑值的字符或字符串&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;(λx.M)&lt;/td&gt;
+      &lt;td&gt;抽象化&lt;/td&gt;
+      &lt;td&gt;函数定义（M是一个lambda项）。变量x在表达式中已被绑定。&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;(M N)&lt;/td&gt;
+      &lt;td&gt;应用&lt;/td&gt;
+      &lt;td&gt;将函数应用于参数。 M 和 N 是lambda项。&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;11-非形式化的直觉描述&quot;&gt;1.1 非形式化的直觉描述&lt;/h2&gt;
+
+&lt;p&gt;eg: 函数f(x)= x + 2可以用lambda演算表示为λx.x + 2&lt;br /&gt;
+而f(3)的值可以写作(λx.x + 2) 3&lt;/p&gt;
+
+&lt;h3 id=&quot;演化过程&quot;&gt;演化过程&lt;/h3&gt;
+
+&lt;p&gt;两数的平方和函数
+&lt;img src=&quot;/img/in-post/function_3_2.svg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;可以用匿名的形式重新写为：
+&lt;img src=&quot;/img/in-post/function_3_3.svg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;进一步，可以使用柯里化的方法，将多参数的函数转换成为多个中介函数的复合链，每个中介函数都只接受一个参数。
+&lt;img src=&quot;/img/in-post/function_3_4.svg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;12-归约&quot;&gt;1.2 归约&lt;/h2&gt;
+
+&lt;h3 id=&quot;α-替换&quot;&gt;α-替换&lt;/h3&gt;
+
+&lt;p&gt;α 替换(α-conversion)所指的是在不出现命名冲突的前提下可以将函数的参数重新命名。比如，下面等号两边的定义是等价的:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/in-post/function_3_5.png&quot; width=&quot;55%&quot; height=&quot;55%&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;β-归约&quot;&gt;β-归约&lt;/h3&gt;
+
+&lt;p&gt;β 归约(β-reduction)则指的是参数到函数体的替换。应用参数 N 于函
+数 λx → M，相当于在不出现命名冲突的前提下，把 M 中出现的 x 替换为 N。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/in-post/function_3_6.png&quot; width=&quot;57%&quot; height=&quot;57%&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;eg: (λx → x + 2) y → β y + 2&lt;/p&gt;
+
+&lt;h3 id=&quot;η-归约&quot;&gt;η-归约&lt;/h3&gt;
+
+&lt;p&gt;η 归约(η-reduction)可以用来消去那些冗余的 λ 表达。在定义函数时，
+可以将一个参数传给函数 M，进行计算的函数和 M 本身是同一个函数:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/in-post/function_3_7.png&quot; width=&quot;40%&quot; height=&quot;40%&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;eg: (λy → λx → x + y) → (+) x y&lt;/p&gt;
+
+&lt;h1 id=&quot;2-in-java&quot;&gt;2. in Java&lt;/h1&gt;
+
 &lt;p&gt;Lambda表达式的主要应用有两个：&lt;/p&gt;
 
-&lt;ul&gt;
+&lt;ol&gt;
   &lt;li&gt;构造一个匿名函数（anonymous function）&lt;/li&gt;
   &lt;li&gt;对于对于柯里化函数，在不给定前一个参数的前提下给定后一个&lt;/li&gt;
-&lt;/ul&gt;
+&lt;/ol&gt;
 
-&lt;h2 id=&quot;11-基本语法&quot;&gt;1.1 基本语法&lt;/h2&gt;
+&lt;h2 id=&quot;21-基本语法&quot;&gt;2.1 基本语法&lt;/h2&gt;
 
 &lt;p&gt;Lambda表达式有三个部分：&lt;/p&gt;
 
@@ -53,7 +129,7 @@
 	&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Apple&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Apple&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getWeight&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;compareTo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getWeight&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;h2 id=&quot;12-使用示例&quot;&gt;1.2 使用示例&lt;/h2&gt;
+&lt;h2 id=&quot;22-使用示例&quot;&gt;2.2 使用示例&lt;/h2&gt;
 
 &lt;table&gt;
   &lt;thead&gt;
@@ -128,7 +204,6 @@
 &lt;span class=&quot;n&quot;&gt;plus1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Num&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;plus1&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;[]&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;plus&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plus1&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xs&lt;/span&gt;
-
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;根据不同的需求可能映射不同的函数f，并且可以得到map函数作为这一类函数一般形式的抽象：&lt;/p&gt;
@@ -139,7 +214,6 @@
 &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;map&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;h2 id=&quot;12-in-java&quot;&gt;1.2 in java&lt;/h2&gt;
@@ -207,6 +281,41 @@
 
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;2-柯里化函数&quot;&gt;2. 柯里化函数&lt;/h1&gt;
+
+&lt;h2 id=&quot;21-非柯里化函数&quot;&gt;2.1 非柯里化函数&lt;/h2&gt;
+
+&lt;p&gt;当函数有多个参数时，必须通过元组一次性传入，然后返回结果，这样的函数就是非柯里化的函数。&lt;/p&gt;
+
+&lt;p&gt;eg：在定义函数时，函数需要多少个参数就需要传入多少元的元组。&lt;/p&gt;
+
+&lt;div class=&quot;language-haskell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;add3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;add4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;22-柯里化函数&quot;&gt;2.2 柯里化函数&lt;/h2&gt;
+
+&lt;p&gt;当函数有多个参数时，参数可以一个一个地依次输入，如果参数不足，将返回一个函数作为结果，这样的函数就是柯里化的函数。&lt;/p&gt;
+
+&lt;div class=&quot;language-haskell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;add'&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;add'&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;add'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;add'&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;add'&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;add函数定义：f(x, y)=x + y，如果给定了第一个参数，这个函数就变成了一个一元函数 f(4, y) = 4 + y&lt;/p&gt;
+
+&lt;p&gt;Java中有多种方法实现柯里化：&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;IntFunction&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IntUnaryOperator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;applyAsInt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// 9&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;3-复合函数&quot;&gt;3. 复合函数&lt;/h1&gt;
 
 </description>
         <pubDate>Sat, 30 Jun 2018 00:00:00 +0800</pubDate>
