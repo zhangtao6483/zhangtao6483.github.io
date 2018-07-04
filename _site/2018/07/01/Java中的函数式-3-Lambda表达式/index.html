@@ -358,7 +358,81 @@ Lambda演算包括了建构lambda项，和对lambda项运行归约的操作。�
   </tbody>
 </table>
 
+<h2 id="23-闭包">2.3 闭包</h2>
 
+<p>Lambda表达式允许使用<em>自由变量</em>，就像匿名类一样</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">portNumber</span> <span class="o">=</span> <span class="mi">1337</span><span class="o">;</span>
+<span class="n">Runnable</span> <span class="n">r</span> <span class="o">=</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">portNumber</span><span class="o">);</span>
+</code></pre></div></div>
+
+<p>Lambda可以没有限制地捕获实例变量和静态变量。但局部变量必须显示地声明为final，或事实上是final。下面代码无法编译，因为portNumber变量被赋值两次：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">portNumber</span> <span class="o">=</span> <span class="mi">1337</span><span class="o">;</span>
+<span class="n">Runnable</span> <span class="n">r</span> <span class="o">=</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">portNumber</span><span class="o">);</span>
+<span class="n">portNumber</span> <span class="o">=</span> <span class="mi">31337</span><span class="o">;</span>
+</code></pre></div></div>
+
+<p>对局部变量的限制目的在于：</p>
+
+<ol>
+  <li>实例变量和局部变量背后的实现有一个关键不同。实例变量都存储在堆中，而局部变量则保存在栈上。如果Lambda可以直接访问局部变量，而且Lambda是在一个线程中使用的，则使用Lambda的线程，可能会在分配该变量的线程将这个变量收回之后，去访问该变量。因此，Java在访问自由局部变量时，实际上是在访问它的副本，而不是访问原始变量。如果允许捕获可改变的局部变量，就会引发造成线程不安全的可能性。</li>
+  <li>这一限制不鼓励你使用改变外部变量的典型命令式编程模式</li>
+</ol>
+
+<p><strong>闭包定义</strong>：一个函数的实例，且它可以无限 制地访问那个函数的非本地变量。因为访问的变量都是final类型的，所以可以认为Lambda 是对值封闭，而不是对变量封闭。</p>
+
+<h2 id="24-方法引用">2.4 方法引用</h2>
+
+<p>Lambda及其等效方法引用的例子</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Lambda</th>
+      <th>等效的方法引用</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>(Apple a) -&gt; a.getWeight()</td>
+      <td>Apple::getWeight</td>
+    </tr>
+    <tr>
+      <td>() -&gt; Thread.currentThread().dumpStack()</td>
+      <td>Thread.currentThread()::dumpStack</td>
+    </tr>
+    <tr>
+      <td>(str, i) -&gt; str.substring(i)</td>
+      <td>String::substring</td>
+    </tr>
+    <tr>
+      <td>(String s) -&gt; System.out.println(s)</td>
+      <td>System.out::println</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>方法引用主要有三类。</p>
+
+<ol>
+  <li>指向静态方法的方法引用(例如Integer的parseInt方法，写作Integer::parseInt)。</li>
+  <li>指向任意类型实例方法的方法引用(例如String的length方法，写作String::length)。</li>
+  <li>指向现有对象的实例方法的方法引用(假设你有一个局部变量expensiveTransaction 用于存放Transaction类型的对象，它支持实例方法getValue，那么你就可以写expensive- Transaction::getValue)。</li>
+</ol>
+
+<h3 id="构造函数引用">构造函数引用</h3>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">BiFunction</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Integer</span><span class="o">,</span> <span class="n">Apple</span><span class="o">&gt;</span> <span class="n">c3</span> <span class="o">=</span> <span class="nl">Apple:</span><span class="o">:</span><span class="k">new</span><span class="o">;</span>
+<span class="n">Apple</span> <span class="n">c3</span> <span class="o">=</span> <span class="n">c3</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="s">"green"</span><span class="o">,</span> <span class="mi">110</span><span class="o">);</span>
+</code></pre></div></div>
+<p>等价于</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">BiFunction</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Integer</span><span class="o">,</span> <span class="n">Apple</span><span class="o">&gt;</span> <span class="n">c3</span> <span class="o">=</span> <span class="o">(</span><span class="n">color</span><span class="o">,</span> <span class="n">weight</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">Apple</span><span class="o">(</span><span class="n">color</span><span class="o">,</span> <span class="n">weight</span><span class="o">);</span>
+<span class="n">Apple</span> <span class="n">c3</span> <span class="o">=</span> <span class="n">c3</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="s">"green"</span><span class="o">,</span> <span class="mi">110</span><span class="o">);</span>
+</code></pre></div></div>
+
+
+                <br><br><br><br><br><br>
 
                 <hr style="visibility: hidden;">
 

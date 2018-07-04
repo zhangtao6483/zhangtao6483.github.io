@@ -119,5 +119,55 @@ Comparator<Apple> byWeight =
 | 组合两个值           |(int a, int b) -> a * b| IntBinaryOperator |
 | 比较两个对象          |(Apple a1, Apple a2) -><br>a1.getWeight().compareTo(a2.getWeight())| Comparator<Apple>或 <br>BiFunction<Apple, Apple, Integer> 或 <br>ToIntBiFunction<Apple, Apple> |
 
+## 2.3 闭包
 
+Lambda表达式允许使用*自由变量*，就像匿名类一样
 
+```java
+int portNumber = 1337;
+Runnable r = () -> System.out.println(portNumber);
+```
+
+Lambda可以没有限制地捕获实例变量和静态变量。但局部变量必须显示地声明为final，或事实上是final。下面代码无法编译，因为portNumber变量被赋值两次：
+
+```java
+int portNumber = 1337;
+Runnable r = () -> System.out.println(portNumber);
+portNumber = 31337;
+```
+
+对局部变量的限制目的在于：
+
+1. 实例变量和局部变量背后的实现有一个关键不同。实例变量都存储在堆中，而局部变量则保存在栈上。如果Lambda可以直接访问局部变量，而且Lambda是在一个线程中使用的，则使用Lambda的线程，可能会在分配该变量的线程将这个变量收回之后，去访问该变量。因此，Java在访问自由局部变量时，实际上是在访问它的副本，而不是访问原始变量。如果允许捕获可改变的局部变量，就会引发造成线程不安全的可能性。
+2. 这一限制不鼓励你使用改变外部变量的典型命令式编程模式
+
+**闭包定义**：一个函数的实例，且它可以无限 制地访问那个函数的非本地变量。因为访问的变量都是final类型的，所以可以认为Lambda 是对值封闭，而不是对变量封闭。
+
+## 2.4 方法引用
+
+Lambda及其等效方法引用的例子
+
+| Lambda | 等效的方法引用 |
+|--------|--------------|
+| (Apple a) -> a.getWeight() | Apple::getWeight |
+| () -> Thread.currentThread().dumpStack() |Thread.currentThread()::dumpStack |
+| (str, i) -> str.substring(i) | String::substring | 
+| (String s) -> System.out.println(s) | System.out::println |
+
+方法引用主要有三类。
+
+1. 指向静态方法的方法引用(例如Integer的parseInt方法，写作Integer::parseInt)。
+2. 指向任意类型实例方法的方法引用(例如String的length方法，写作String::length)。
+3. 指向现有对象的实例方法的方法引用(假设你有一个局部变量expensiveTransaction 用于存放Transaction类型的对象，它支持实例方法getValue，那么你就可以写expensive- Transaction::getValue)。
+
+### 构造函数引用
+
+```java
+BiFunction<String, Integer, Apple> c3 = Apple::new;
+Apple c3 = c3.apply("green", 110);
+```
+等价于
+```java
+BiFunction<String, Integer, Apple> c3 = (color, weight) -> new Apple(color, weight);
+Apple c3 = c3.apply("green", 110);
+```
