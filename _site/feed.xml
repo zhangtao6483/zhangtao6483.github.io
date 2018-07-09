@@ -5,8 +5,8 @@
     <description>序员的业余生活</description>
     <link>zhangtao6483.github.io/</link>
     <atom:link href="zhangtao6483.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Tue, 10 Jul 2018 00:31:57 +0800</pubDate>
-    <lastBuildDate>Tue, 10 Jul 2018 00:31:57 +0800</lastBuildDate>
+    <pubDate>Tue, 10 Jul 2018 00:35:06 +0800</pubDate>
+    <lastBuildDate>Tue, 10 Jul 2018 00:35:06 +0800</lastBuildDate>
     <generator>Jekyll v3.8.3</generator>
     
       <item>
@@ -21,7 +21,7 @@
 
 &lt;p&gt;eg：div a 0 = ⊥&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/img/in-post/function_4_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/img/in-post/function_4_1.png&quot; width=&quot;50%&quot; height=&quot;50%&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;对于函数 f: X → Y 
 若X与Y的关系满足： f是多对一的：若 f(x)=y且 f(x)=z，则 y=z。即，多个输入可以映射到一个输出，但一个输入不能映射到多个输出。则为&lt;a href=&quot;https://en.wikipedia.org/wiki/Partial_function&quot;&gt;偏函数&lt;/a&gt;。&lt;/p&gt;
