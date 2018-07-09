@@ -5,13 +5,59 @@
     <description>序员的业余生活</description>
     <link>zhangtao6483.github.io/</link>
     <atom:link href="zhangtao6483.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Thu, 05 Jul 2018 11:44:35 +0800</pubDate>
-    <lastBuildDate>Thu, 05 Jul 2018 11:44:35 +0800</lastBuildDate>
+    <pubDate>Tue, 10 Jul 2018 00:31:57 +0800</pubDate>
+    <lastBuildDate>Tue, 10 Jul 2018 00:31:57 +0800</lastBuildDate>
     <generator>Jekyll v3.8.3</generator>
     
       <item>
         <title>Java中的函数式 - 4 惰性求值</title>
-        <description>&lt;h1 id=&quot;1-惰性求值&quot;&gt;1. 惰性求值&lt;/h1&gt;
+        <description>&lt;h1 id=&quot;1-haskell&quot;&gt;1. Haskell&lt;/h1&gt;
+
+&lt;p&gt;在Haskell规范中，并没有要求使用惰性求值策略，只是规定它是一种非严格的语言（non-strict language），具体的求值策略取决于实现。&lt;/p&gt;
+
+&lt;h2 id=&quot;11-bottom&quot;&gt;1.1 Bottom&lt;/h2&gt;
+
+&lt;p&gt;在函数式编程语言语义中，可以用 ⊥ 表示计算不可能完成的结果。有一些 λ 表达式 不会被化简为 β-nf，那么这种表达式的语义或者结果就可以表示为 ⊥。在 Haskell 中，它可以代表多种形式，比如 forever 的结果、异常或者是 undefined 函数。&lt;/p&gt;
+
+&lt;p&gt;eg：div a 0 = ⊥&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/in-post/function_4_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;对于函数 f: X → Y 
+若X与Y的关系满足： f是多对一的：若 f(x)=y且 f(x)=z，则 y=z。即，多个输入可以映射到一个输出，但一个输入不能映射到多个输出。则为&lt;a href=&quot;https://en.wikipedia.org/wiki/Partial_function&quot;&gt;偏函数&lt;/a&gt;。&lt;/p&gt;
+
+&lt;h3 id=&quot;严格性strictness&quot;&gt;严格性（strictness）&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;在编程语言中，当且仅当 f ⊥=⊥ 时，我们则说函数 f 是严格的。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;对于非严格函数：&lt;/p&gt;
+
+&lt;div class=&quot;language-haskell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;newtype&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;N&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;N&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;N&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;42&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;undefined&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;42&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;严格函数&lt;/p&gt;
+
+&lt;div class=&quot;language-haskell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;42&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;undefined&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;***&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Exception&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Prelude&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;undefined&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;对于Haskell非严格的语言，在计算 d (D undefined) 时函数会返回 42，因为它不必去严格计 算 D undefined 中 undefined 的部分&lt;/p&gt;
+
+&lt;div class=&quot;language-haskell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;undefined&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;42&lt;/span&gt; 
+
+&lt;span class=&quot;o&quot;&gt;&amp;lt;!--&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;如果要明确&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;构造器中的严格地计算&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;构造器中的&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;值时，需要在类型前加&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!--&amp;gt;&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;D2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;D2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d2&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;42&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d2&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;undefined&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;***&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Exception&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Prelude&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;undefined&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 </description>
         <pubDate>Thu, 05 Jul 2018 00:00:00 +0800</pubDate>

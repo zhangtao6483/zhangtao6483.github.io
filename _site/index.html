@@ -186,9 +186,13 @@
         </h2>
         
         <!-- <div class="post-content-preview">
-            1. 惰性求值
+            1. Haskell
 
+在Haskell规范中，并没有要求使用惰性求值策略，只是规定它是一种非严格的语言（non-strict language），具体的求值策略取决于实现。
 
+1.1 Bottom
+
+在函数式编程语言语义中，可以用 ⊥ 表示计算不可能完成的结果。有一些 λ 表达式 不会被化简为 β-nf，那么这种表达式的语义或者结果就可以表示为 ⊥。在 Haskell 中，它可以代表多种形...
         </div> -->
     </a>
     <p class="post-meta">

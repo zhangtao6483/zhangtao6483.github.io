@@ -196,7 +196,53 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-				<h1 id="1-惰性求值">1. 惰性求值</h1>
+				<h1 id="1-haskell">1. Haskell</h1>
+
+<p>在Haskell规范中，并没有要求使用惰性求值策略，只是规定它是一种非严格的语言（non-strict language），具体的求值策略取决于实现。</p>
+
+<h2 id="11-bottom">1.1 Bottom</h2>
+
+<p>在函数式编程语言语义中，可以用 ⊥ 表示计算不可能完成的结果。有一些 λ 表达式 不会被化简为 β-nf，那么这种表达式的语义或者结果就可以表示为 ⊥。在 Haskell 中，它可以代表多种形式，比如 forever 的结果、异常或者是 undefined 函数。</p>
+
+<p>eg：div a 0 = ⊥</p>
+
+<p><img src="/img/in-post/function_4_1.png" alt="" /></p>
+
+<p>对于函数 f: X → Y 
+若X与Y的关系满足： f是多对一的：若 f(x)=y且 f(x)=z，则 y=z。即，多个输入可以映射到一个输出，但一个输入不能映射到多个输出。则为<a href="https://en.wikipedia.org/wiki/Partial_function">偏函数</a>。</p>
+
+<h3 id="严格性strictness">严格性（strictness）</h3>
+
+<p><strong>在编程语言中，当且仅当 f ⊥=⊥ 时，我们则说函数 f 是严格的。</strong></p>
+
+<p>对于非严格函数：</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> <span class="kr">newtype</span> <span class="kt">N</span> <span class="o">=</span> <span class="kt">N</span> <span class="kt">Int</span>
+<span class="o">&gt;</span> <span class="n">n</span> <span class="p">(</span><span class="kt">N</span> <span class="n">i</span><span class="p">)</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="o">&gt;</span> <span class="n">n</span> <span class="n">undefined</span>
+<span class="mi">42</span>
+</code></pre></div></div>
+
+<p>严格函数</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> <span class="kr">data</span> <span class="kt">D</span> <span class="o">=</span> <span class="kt">D</span> <span class="kt">Int</span>
+<span class="o">&gt;</span> <span class="n">d</span> <span class="p">(</span><span class="kt">D</span> <span class="n">i</span><span class="p">)</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="o">&gt;</span> <span class="n">d</span> <span class="n">undefined</span>
+<span class="o">***</span> <span class="kt">Exception</span><span class="o">:</span> <span class="kt">Prelude</span><span class="o">.</span><span class="n">undefined</span>
+</code></pre></div></div>
+
+<p>对于Haskell非严格的语言，在计算 d (D undefined) 时函数会返回 42，因为它不必去严格计 算 D undefined 中 undefined 的部分</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> <span class="n">d</span> <span class="p">(</span><span class="kt">D</span> <span class="n">undefined</span><span class="p">)</span>
+<span class="mi">42</span> 
+
+<span class="o">&lt;!--</span><span class="err">如果要明确</span> <span class="kt">D</span> <span class="err">构造器中的严格地计算</span> <span class="kt">D</span> <span class="err">构造器中的</span> <span class="kt">Int</span> <span class="err">值时，需要在类型前加</span><span class="o">!--&gt;</span>
+
+<span class="o">&gt;</span> <span class="kr">data</span> <span class="kt">D2</span> <span class="o">=</span> <span class="kt">D2</span> <span class="o">!</span><span class="kt">Int</span>
+<span class="o">&gt;</span> <span class="n">d2</span> <span class="p">(</span><span class="kt">D</span> <span class="n">i</span><span class="p">)</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="o">&gt;</span> <span class="n">d2</span> <span class="p">(</span><span class="kt">D</span> <span class="n">undefined</span><span class="p">)</span>
+<span class="o">***</span> <span class="kt">Exception</span><span class="o">:</span> <span class="kt">Prelude</span><span class="o">.</span><span class="n">undefined</span>
+</code></pre></div></div>
 
 
 
