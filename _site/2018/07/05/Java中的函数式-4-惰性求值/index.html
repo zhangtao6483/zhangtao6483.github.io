@@ -244,6 +244,29 @@
 <span class="o">***</span> <span class="kt">Exception</span><span class="o">:</span> <span class="kt">Prelude</span><span class="o">.</span><span class="n">undefined</span>
 </code></pre></div></div>
 
+<h2 id="12-thunk">1.2 thunk</h2>
+
+<p>Haskell 的惰性求值正是通过将表达式包装成一个thunk实现的。
+当结果为 WHNF 计算时就会停止，同时，使用 thunk 来代表还不需要 的结果。对于相同的参数会被相同的 thunk 替代。</p>
+
+<p>eg:</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> <span class="kr">let</span> <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+<span class="o">&gt;</span> <span class="o">:</span><span class="n">sprint</span> <span class="n">x</span>
+<span class="n">x</span> <span class="o">=</span> <span class="kr">_</span>
+
+<span class="o">&gt;</span> <span class="kr">let</span> <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
+<span class="o">&gt;</span> <span class="o">:</span><span class="n">sprint</span> <span class="n">y</span>
+<span class="n">y</span> <span class="o">=</span> <span class="kr">_</span>
+
+<span class="o">&gt;</span> <span class="n">x</span>
+<span class="mi">2</span>
+<span class="o">&gt;</span> <span class="n">y</span>
+<span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>对 x 求值一次那么元组 y 内的两个 x 值都被求出，这里 x 是 被共享的。用这种方法就能够使用相对较少的步骤来计算出一个表达式的值，与此同时计算可以被尽可能地延后。</p>
+
 
 
                 <br><br><br><br><br><br>
