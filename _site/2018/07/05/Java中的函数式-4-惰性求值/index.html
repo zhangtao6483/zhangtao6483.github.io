@@ -204,7 +204,9 @@
 
 <h2 id="11-bottom">1.1 Bottom</h2>
 
-<p>在函数式编程语言语义中，可以用 ⊥ 表示计算不可能完成的结果。有一些 λ 表达式 不会被化简为 β-nf，那么这种表达式的语义或者结果就可以表示为 ⊥。在 Haskell 中，它可以代表多种形式，比如 forever 的结果、异常或者是 undefined 函数。</p>
+<p>在函数式编程语言语义中，可以用 ⊥ 表示计算不可能完成的结果。<br />
+如果对一个表达式的求值一直运行或抛出一个错误而非返回一个定义的值，就说这个表达式没有结束（terminate），或者说evaluates to bottom。<br />
+有一些 λ 表达式 不会被化简为 β-nf，那么这种表达式的语义或者结果就可以表示为 ⊥。在 Haskell 中，它可以代表多种形式，比如 forever 的结果、异常或者是 undefined 函数。</p>
 
 <p>eg：div a 0 = ⊥</p>
 
@@ -215,7 +217,8 @@
 
 <h3 id="严格性strictness">严格性（strictness）</h3>
 
-<p><strong>在编程语言中，当且仅当 f ⊥=⊥ 时，我们则说函数 f 是严格的。</strong></p>
+<p><strong>在编程语言中，当且仅当 f ⊥=⊥ 时，我们则说函数 f 是严格的。</strong><br />
+或者可以理解为：称一个函数式非严格求值的意思是这个函数可以选择不对它的一个或多个参数求值。严格求值的函数总是对它的参数求值。</p>
 
 <p>对于非严格函数：</p>
 
@@ -248,8 +251,11 @@
 
 <h2 id="12-thunk">1.2 thunk</h2>
 
-<p>Haskell 的惰性求值正是通过将表达式包装成一个thunk实现的。
-当结果为 WHNF 计算时就会停止，同时，使用 thunk 来代表还不需要 的结果。对于相同的参数会被相同的 thunk 替代。</p>
+<p>Haskell 的惰性求值正是通过将表达式包装成一个thunk实现的。thunk 意为形实替换程序，它指的是在计算的过程中，一些函数的参数或者一些结果通过一段程序来代表。</p>
+
+<p><img src="/img/in-post/function_4_2.png" width="50%" height="50%" /></p>
+
+<p>当结果为 WHNF 计算时就会停止，同时，使用 thunk 来代表还不需要 的结果。对于相同的参数会被相同的 thunk 替代。</p>
 
 <p>eg:</p>
 
@@ -268,6 +274,25 @@
 </code></pre></div></div>
 
 <p>对 x 求值一次那么元组 y 内的两个 x 值都被求出，这里 x 是 被共享的。用这种方法就能够使用相对较少的步骤来计算出一个表达式的值，与此同时计算可以被尽可能地延后。</p>
+
+<h1 id="2-scala">2. Scala</h1>
+
+<p>在Scala中，若未明确声明，所有函数都是严格求值的，即函数会立即对它的参数进行求值。</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="k">def</span> <span class="n">n</span><span class="o">(</span><span class="n">i</span><span class="k">:</span> <span class="o">=&gt;</span> <span class="nc">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">{</span>
+     <span class="o">|</span>   <span class="mi">42</span>
+     <span class="o">|</span> <span class="o">}</span>
+<span class="n">n</span><span class="k">:</span> <span class="o">(</span><span class="kt">i:</span> <span class="o">=&gt;</span> <span class="kt">Int</span><span class="o">)</span><span class="nc">Int</span>
+
+<span class="n">scala</span><span class="o">&gt;</span> <span class="n">n</span><span class="o">(???)</span>
+<span class="n">res</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">42</span>
+</code></pre></div></div>
+
+<p>在参数类型前加 =&gt; 即可将其修改为传名调用，在方法体中不需要对用 =&gt; 标注的参数做任何事情，Scala会负责将表达式包装为thunk。<br />
+而如果对val变量添加lazy修饰符，则Scala会延迟对该变量求值，直到它第一次被引用时。</p>
+
+<h1 id="3-java">3. Java</h1>
+
 
 
                 <br><br><br><br><br><br>
