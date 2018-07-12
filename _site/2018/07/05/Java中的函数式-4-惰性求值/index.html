@@ -293,6 +293,42 @@
 
 <h1 id="3-java">3. Java</h1>
 
+<h2 id="31-stream延迟计算">3.1 Stream延迟计算</h2>
+
+<p>Java8中Stream为延迟求值：当向一个Stream发起一系列操作时，这些请求只是被保存起来。只有当你向Stream发起一个终端操作，才会实际地进行计算，这种方式的优势是Stream只需要遍历一次，不需要为每个操作遍历一次所有元素。</p>
+
+<h2 id="32-构造延迟列表">3.2 构造延迟列表</h2>
+
+<p>利用Supplier构造延迟Stream</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">FibonacciSupplier</span> <span class="kd">implements</span> <span class="n">Supplier</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span> <span class="o">{</span>
+
+    <span class="kt">long</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="kt">long</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">Long</span> <span class="nf">get</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kt">long</span> <span class="n">x</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">;</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">b</span><span class="o">;</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">x</span><span class="o">;</span>
+        <span class="k">return</span> <span class="n">a</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">FibonacciStream</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Stream</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span> <span class="n">fibonacci</span> <span class="o">=</span> <span class="n">Stream</span><span class="o">.</span><span class="na">generate</span><span class="o">(</span><span class="k">new</span> <span class="n">FibonacciSupplier</span><span class="o">());</span>
+        <span class="n">fibonacci</span><span class="o">.</span><span class="na">limit</span><span class="o">(</span><span class="mi">10</span><span class="o">).</span><span class="na">forEach</span><span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>如果想取得数列的前10项，用limit(10)，如果想取得数列的第20~30项，用：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">List</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="n">fibonacci</span><span class="o">.</span><span class="na">skip</span><span class="o">(</span><span class="mi">20</span><span class="o">).</span><span class="na">limit</span><span class="o">(</span><span class="mi">10</span><span class="o">).</span><span class="na">collect</span><span class="o">(</span><span class="n">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">());</span>
+</code></pre></div></div>
+
 
 
                 <br><br><br><br><br><br>
