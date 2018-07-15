@@ -10,7 +10,7 @@
     <meta name="keywords"  content="">
     <meta name="theme-color" content="">
     
-    <title>Java中的函数式 - 4 惰性求值 - </title>
+    <title>Java中的函数式 - 6 Monad - </title>
 
     <!-- Web App Manifest -->
     <link rel="manifest" href="/pwa/manifest.json">
@@ -19,7 +19,7 @@
     <link rel="shortcut icon" href="/img/favicon.ico">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="zhangtao6483.github.io/2018/07/05/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-4-%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC/">
+    <link rel="canonical" href="zhangtao6483.github.io/2018/07/14/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-6-Monad/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -175,12 +175,12 @@
                         <a class="tag" href="/tags/#函数式" title="函数式">函数式</a>
                         
                     </div>
-                    <h1>Java中的函数式 - 4 惰性求值</h1>
+                    <h1>Java中的函数式 - 6 Monad</h1>
                     
                     
                     <h2 class="subheading"></h2>
                     
-                    <span class="meta">Posted by zhangtao on July 5, 2018</span>
+                    <span class="meta">Posted by zhangtao on July 14, 2018</span>
                 </div>
             </div>
         </div>
@@ -198,137 +198,9 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-				<h1 id="1-haskell">1. Haskell</h1>
+				<h1 id="1-monad">1. Monad</h1>
 
-<p>在Haskell规范中，并没有要求使用惰性求值策略，只是规定它是一种非严格的语言（non-strict language），具体的求值策略取决于实现。</p>
-
-<h2 id="11-bottom">1.1 Bottom</h2>
-
-<p>在函数式编程语言语义中，可以用 ⊥ 表示计算不可能完成的结果。<br />
-如果对一个表达式的求值一直运行或抛出一个错误而非返回一个定义的值，就说这个表达式没有结束（terminate），或者说evaluates to bottom。<br />
-有一些 λ 表达式 不会被化简为 β-nf，那么这种表达式的语义或者结果就可以表示为 ⊥。在 Haskell 中，它可以代表多种形式，比如 forever 的结果、异常或者是 undefined 函数。</p>
-
-<p>eg：div a 0 = ⊥</p>
-
-<p><img src="/img/in-post/function_4_1.png" width="30%" height="30%" /></p>
-
-<p>对于函数 f: X → Y 
-若X与Y的关系满足： f是多对一的：若 f(x)=y且 f(x)=z，则 y=z。即，多个输入可以映射到一个输出，但一个输入不能映射到多个输出。则为<a href="https://en.wikipedia.org/wiki/Partial_function">偏函数</a>。</p>
-
-<h3 id="严格性strictness">严格性（strictness）</h3>
-
-<p><strong>在编程语言中，当且仅当 f ⊥=⊥ 时，我们则说函数 f 是严格的。</strong><br />
-或者可以理解为：称一个函数式非严格求值的意思是这个函数可以选择不对它的一个或多个参数求值。严格求值的函数总是对它的参数求值。</p>
-
-<p>对于非严格函数：</p>
-
-<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> <span class="kr">newtype</span> <span class="kt">N</span> <span class="o">=</span> <span class="kt">N</span> <span class="kt">Int</span>
-<span class="o">&gt;</span> <span class="n">n</span> <span class="p">(</span><span class="kt">N</span> <span class="n">i</span><span class="p">)</span> <span class="o">=</span> <span class="mi">42</span>
-<span class="o">&gt;</span> <span class="n">n</span> <span class="n">undefined</span>
-<span class="mi">42</span>
-</code></pre></div></div>
-
-<p>严格函数</p>
-
-<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> <span class="kr">data</span> <span class="kt">D</span> <span class="o">=</span> <span class="kt">D</span> <span class="kt">Int</span>
-<span class="o">&gt;</span> <span class="n">d</span> <span class="p">(</span><span class="kt">D</span> <span class="n">i</span><span class="p">)</span> <span class="o">=</span> <span class="mi">42</span>
-<span class="o">&gt;</span> <span class="n">d</span> <span class="n">undefined</span>
-<span class="o">***</span> <span class="kt">Exception</span><span class="o">:</span> <span class="kt">Prelude</span><span class="o">.</span><span class="n">undefined</span>
-</code></pre></div></div>
-
-<p>对于Haskell非严格的语言，在计算 d (D undefined) 时函数会返回 42，因为它不必去严格计 算 D undefined 中 undefined 的部分</p>
-
-<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> <span class="n">d</span> <span class="p">(</span><span class="kt">D</span> <span class="n">undefined</span><span class="p">)</span>
-<span class="mi">42</span> 
-
-<span class="o">&lt;!--</span><span class="err">如果要明确</span> <span class="kt">D</span> <span class="err">构造器中的严格地计算</span> <span class="kt">D</span> <span class="err">构造器中的</span> <span class="kt">Int</span> <span class="err">值时，需要在类型前加</span><span class="o">!--&gt;</span>
-
-<span class="o">&gt;</span> <span class="kr">data</span> <span class="kt">D2</span> <span class="o">=</span> <span class="kt">D2</span> <span class="o">!</span><span class="kt">Int</span>
-<span class="o">&gt;</span> <span class="n">d2</span> <span class="p">(</span><span class="kt">D</span> <span class="n">i</span><span class="p">)</span> <span class="o">=</span> <span class="mi">42</span>
-<span class="o">&gt;</span> <span class="n">d2</span> <span class="p">(</span><span class="kt">D</span> <span class="n">undefined</span><span class="p">)</span>
-<span class="o">***</span> <span class="kt">Exception</span><span class="o">:</span> <span class="kt">Prelude</span><span class="o">.</span><span class="n">undefined</span>
-</code></pre></div></div>
-
-<h2 id="12-thunk">1.2 thunk</h2>
-
-<p>Haskell 的惰性求值正是通过将表达式包装成一个thunk实现的。thunk 意为形实替换程序，它指的是在计算的过程中，一些函数的参数或者一些结果通过一段程序来代表。</p>
-
-<p><img src="/img/in-post/function_4_2.png" width="50%" height="50%" /></p>
-
-<p>当结果为 WHNF 计算时就会停止，同时，使用 thunk 来代表还不需要 的结果。对于相同的参数会被相同的 thunk 替代。</p>
-
-<p>eg:</p>
-
-<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> <span class="kr">let</span> <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-<span class="o">&gt;</span> <span class="o">:</span><span class="n">sprint</span> <span class="n">x</span>
-<span class="n">x</span> <span class="o">=</span> <span class="kr">_</span>
-
-<span class="o">&gt;</span> <span class="kr">let</span> <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">x</span><span class="p">)</span>
-<span class="o">&gt;</span> <span class="o">:</span><span class="n">sprint</span> <span class="n">y</span>
-<span class="n">y</span> <span class="o">=</span> <span class="kr">_</span>
-
-<span class="o">&gt;</span> <span class="n">x</span>
-<span class="mi">2</span>
-<span class="o">&gt;</span> <span class="n">y</span>
-<span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
-</code></pre></div></div>
-
-<p>对 x 求值一次那么元组 y 内的两个 x 值都被求出，这里 x 是 被共享的。用这种方法就能够使用相对较少的步骤来计算出一个表达式的值，与此同时计算可以被尽可能地延后。</p>
-
-<h1 id="2-scala">2. Scala</h1>
-
-<p>在Scala中，若未明确声明，所有函数都是严格求值的，即函数会立即对它的参数进行求值。</p>
-
-<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">scala</span><span class="o">&gt;</span> <span class="k">def</span> <span class="n">n</span><span class="o">(</span><span class="n">i</span><span class="k">:</span> <span class="o">=&gt;</span> <span class="nc">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="o">{</span>
-     <span class="o">|</span>   <span class="mi">42</span>
-     <span class="o">|</span> <span class="o">}</span>
-<span class="n">n</span><span class="k">:</span> <span class="o">(</span><span class="kt">i:</span> <span class="o">=&gt;</span> <span class="kt">Int</span><span class="o">)</span><span class="nc">Int</span>
-
-<span class="n">scala</span><span class="o">&gt;</span> <span class="n">n</span><span class="o">(???)</span>
-<span class="n">res</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">42</span>
-</code></pre></div></div>
-
-<p>在参数类型前加 =&gt; 即可将其修改为传名调用，在方法体中不需要对用 =&gt; 标注的参数做任何事情，Scala会负责将表达式包装为thunk。<br />
-而如果对val变量添加lazy修饰符，则Scala会延迟对该变量求值，直到它第一次被引用时。</p>
-
-<h1 id="3-java">3. Java</h1>
-
-<h2 id="31-stream延迟计算">3.1 Stream延迟计算</h2>
-
-<p>Java8中Stream为延迟求值：当向一个Stream发起一系列操作时，这些请求只是被保存起来。只有当你向Stream发起一个终端操作，才会实际地进行计算，这种方式的优势是Stream只需要遍历一次，不需要为每个操作遍历一次所有元素。</p>
-
-<h2 id="32-构造延迟列表">3.2 构造延迟列表</h2>
-
-<p>利用Supplier构造延迟Stream</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">FibonacciSupplier</span> <span class="kd">implements</span> <span class="n">Supplier</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span> <span class="o">{</span>
-
-    <span class="kt">long</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
-    <span class="kt">long</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
-
-    <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">Long</span> <span class="nf">get</span><span class="o">()</span> <span class="o">{</span>
-        <span class="kt">long</span> <span class="n">x</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">;</span>
-        <span class="n">a</span> <span class="o">=</span> <span class="n">b</span><span class="o">;</span>
-        <span class="n">b</span> <span class="o">=</span> <span class="n">x</span><span class="o">;</span>
-        <span class="k">return</span> <span class="n">a</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-
-<span class="kd">public</span> <span class="kd">class</span> <span class="nc">FibonacciStream</span> <span class="o">{</span>
-
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">Stream</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span> <span class="n">fibonacci</span> <span class="o">=</span> <span class="n">Stream</span><span class="o">.</span><span class="na">generate</span><span class="o">(</span><span class="k">new</span> <span class="n">FibonacciSupplier</span><span class="o">());</span>
-        <span class="n">fibonacci</span><span class="o">.</span><span class="na">limit</span><span class="o">(</span><span class="mi">10</span><span class="o">).</span><span class="na">forEach</span><span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>如果想取得数列的前10项，用limit(10)，如果想取得数列的第20~30项，用：</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">List</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">&gt;</span> <span class="n">list</span> <span class="o">=</span> <span class="n">fibonacci</span><span class="o">.</span><span class="na">skip</span><span class="o">(</span><span class="mi">20</span><span class="o">).</span><span class="na">limit</span><span class="o">(</span><span class="mi">10</span><span class="o">).</span><span class="na">collect</span><span class="o">(</span><span class="n">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">());</span>
-</code></pre></div></div>
-
+<p>monad 在一定程度上可以理解为代码的整合、合并，这样可以消减掉重复、冗余代码的一种结构或者编程方式并且可以很好的处理异常和程序副作用(side effect)的机制</p>
 
 
                 <br><br><br><br><br><br>
@@ -341,19 +213,12 @@
                 <ul class="pager">
                     
                     <li class="previous">
-                        <a href="/2018/07/01/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-3-Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F/" data-toggle="tooltip" data-placement="top" title="Java中的函数式 - 3 Lambda表达式">
-                        Previous<br>
-                        <span>Java中的函数式 - 3 Lambda表达式</span>
-                        </a>
-                    </li>
-                    
-                    
-                    <li class="next">
                         <a href="/2018/07/13/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-5-%E6%A8%A1%E5%BC%8F%E5%8C%B9%E9%85%8D/" data-toggle="tooltip" data-placement="top" title="Java中的函数式 - 5 模式匹配">
-                        Next<br>
+                        Previous<br>
                         <span>Java中的函数式 - 5 模式匹配</span>
                         </a>
                     </li>
+                    
                     
                 </ul>
 
@@ -432,8 +297,8 @@
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "https-zhangtao6483-github-io";
-    var disqus_identifier = "/2018/07/05/Java中的函数式 - 4 惰性求值";
-    var disqus_url = "zhangtao6483.github.io/2018/07/05/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-4-%E6%83%B0%E6%80%A7%E6%B1%82%E5%80%BC/";
+    var disqus_identifier = "/2018/07/14/Java中的函数式 - 6 Monad";
+    var disqus_url = "zhangtao6483.github.io/2018/07/14/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-6-Monad/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

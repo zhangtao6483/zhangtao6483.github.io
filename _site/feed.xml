@@ -5,9 +5,24 @@
     <description>序员的业余生活</description>
     <link>zhangtao6483.github.io/</link>
     <atom:link href="zhangtao6483.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 13 Jul 2018 15:02:26 +0800</pubDate>
-    <lastBuildDate>Fri, 13 Jul 2018 15:02:26 +0800</lastBuildDate>
+    <pubDate>Sun, 15 Jul 2018 13:41:48 +0800</pubDate>
+    <lastBuildDate>Sun, 15 Jul 2018 13:41:48 +0800</lastBuildDate>
     <generator>Jekyll v3.8.3</generator>
+    
+      <item>
+        <title>Java中的函数式 - 6 Monad</title>
+        <description>&lt;h1 id=&quot;1-monad&quot;&gt;1. Monad&lt;/h1&gt;
+
+&lt;p&gt;monad 在一定程度上可以理解为代码的整合、合并，这样可以消减掉重复、冗余代码的一种结构或者编程方式并且可以很好的处理异常和程序副作用(side effect)的机制&lt;/p&gt;
+</description>
+        <pubDate>Sat, 14 Jul 2018 00:00:00 +0800</pubDate>
+        <link>zhangtao6483.github.io/2018/07/14/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-6-Monad/</link>
+        <guid isPermaLink="true">zhangtao6483.github.io/2018/07/14/Java%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F-6-Monad/</guid>
+        
+        <category>函数式</category>
+        
+        
+      </item>
     
       <item>
         <title>Java中的函数式 - 5 模式匹配</title>
