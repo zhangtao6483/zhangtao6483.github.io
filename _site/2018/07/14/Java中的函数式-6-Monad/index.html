@@ -198,9 +198,55 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-				<h1 id="1-monad">1. Monad</h1>
+				<h1 id="1-幺半群monoid">1. 幺半群（Monoid）</h1>
 
-<p>monad 在一定程度上可以理解为代码的整合、合并，这样可以消减掉重复、冗余代码的一种结构或者编程方式并且可以很好的处理异常和程序副作用(side effect)的机制</p>
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>封闭性</th>
+      <th>结合律</th>
+      <th>有幺元</th>
+      <th>有逆元</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>群（Group）</td>
+      <td>√</td>
+      <td>√</td>
+      <td>√</td>
+      <td>√</td>
+    </tr>
+    <tr>
+      <td>幺半群（Monoid）</td>
+      <td>√</td>
+      <td>√</td>
+      <td>√</td>
+      <td>×</td>
+    </tr>
+    <tr>
+      <td>半群（Semigroup）</td>
+      <td>√</td>
+      <td>√</td>
+      <td>×</td>
+      <td>×</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>幺半群是一个存在单位元（幺元）的半群</strong></p>
+
+<p>幺半群是一个带有二元运算 *: M × M → M 的集合 M ，其符合下列公理：</p>
+
+<p>封闭性：对任何在 M 内的 a、b，a*b 也会在 M 内。
+结合律：对任何在 M 内的a、b、c ， (a * b ) * c = a * ( b * c ) 
+单位元：存在一在 M 内的元素e，使得任一于 M 内的 a 都会符合 a * e = e * a = a</p>
+
+<h1 id="2-范畴">2. 范畴</h1>
+
+<p>范畴通俗的说是由一组同类的对象和对象间保持结构不变的态射组成的，态 射具有组合性，两个相邻态射可以组合成一个大的态射，态射的组合操作存在单位元且满足交换律。</p>
+
 
 
                 <br><br><br><br><br><br>
