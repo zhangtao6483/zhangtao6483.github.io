@@ -262,9 +262,34 @@
 结合律：对任何在 M 内的a、b、c ， (a * b ) * c = a * ( b * c ) 
 单位元：存在一在 M 内的元素e，使得任一于 M 内的 a 都会符合 a * e = e * a = a</p>
 
+<h2 id="13-初始对象与终极对象">1.3 初始对象与终极对象</h2>
+
+<p>初始对象:对于范畴 C，如果对于所有的对象 A ∈ Ob(C) 都有一个唯一的态射0 → A，那么 0 就是初始对象。</p>
+
+<p>终极对象:对于范畴 C，如果对于所有的对象 A ∈ Ob(C) 都有一个唯一的态射A → <strong>1</strong>，那么 <strong>1</strong> 就是终极对象。</p>
+
+<p>在 Haskell 中初始对象与终极对象分别是 Void 与 Unit</p>
+
 <h1 id="2-函子">2. 函子</h1>
 
 <p>范畴间的态射称 为函子(functor)</p>
+
+<p>C 与 D 为范畴，那么函子 F : C → D 会把 C 中的所有对象与态射对应到 D上，并且保留了复合运算与单位元:</p>
+
+<ol>
+  <li>F(f :A → B) = F(f):F(A) → F(B)</li>
+  <li>F(<strong>1</strong><sub>A</sub>) = <strong>1</strong><sub>F(A)</sub></li>
+  <li>F(g◦c f) = F(g)◦<sub>D</sub> F(f)</li>
+</ol>
+
+<ul>
+  <li>在Haskell中，以 Maybe 类型为例，对于 Int 类型，我们会得到 Maybe Int 类型，而对于 Int -&gt; Char 的函数，我们可以通过 fmap 得到 Maybe Int -&gt; Maybe Char 类型的函数。</li>
+  <li>把 Int -&gt; Int 这个函数映射到 Maybe 中的 Maybe Int -&gt; Maybe Int 函数。id :: a -&gt; a 是一个恒值函数，fmap 会把它映射为 id :: Maybe a -&gt; Maybe a</li>
+  <li>fmap <em>id</em> = <em>id</em><br />
+fmap (<em>g</em> ◦ <em>f</em>) = (fmap <em>g</em>) ◦ (fmap <em>f</em>)</li>
+</ul>
+
+<h1 id="3-单子">3. 单子</h1>
 
 
 
