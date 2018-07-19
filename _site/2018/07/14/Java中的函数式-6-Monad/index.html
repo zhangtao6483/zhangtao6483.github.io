@@ -198,7 +198,26 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-				<h1 id="1-幺半群monoid">1. 幺半群（Monoid）</h1>
+				<h1 id="1-范畴">1. 范畴</h1>
+
+<h2 id="11-定义">1.1 定义</h2>
+
+<p>一个<a href="https://zh.wikipedia.org/wiki/%E7%AF%84%E7%96%87_(%E6%95%B8%E5%AD%B8)">范畴</a>C包括：</p>
+
+<ul>
+  <li>一组对象（<em>object</em>）A,B,C…，记为<em>Ob(C)</em></li>
+  <li>一组态射（<em>morphisrn</em>或<em>arrow</em>）该范畴上的全部态射的集合记为 <em>Arr(C)</em>，对于一个 A 到 B 的态射 f，可以写成:f : A → B</li>
+</ul>
+
+<p>态射：</p>
+
+<ol>
+  <li>态射有复合（<em>composite</em>）运算，对于一对态射 f : A → B 与 g : B → C，存在一个复合的态射 g ◦ f : A → C</li>
+  <li>态射的复合操作满足结合律（<em>associativity</em>）若 A, B, C, D ∈ Ob(C)，那么态射 f:A→B, g:B→C, h:C→D 都有 g◦(g◦f)=(h◦g)◦f</li>
+  <li>对于每一个对象 A ∈ Ob(C) 都存在一个单位态射(identity morphism)<strong>1</strong><sub>A</sub> ∈ C(A,A) 使得对于任意的态射 f ∈ C(A,B) 与 g ∈ C(C,A) 都有： f ◦ <strong>1</strong><sub>A</sub> = f , <strong>1</strong><sub>A</sub> ◦ g = g</li>
+</ol>
+
+<h2 id="12-幺半群monoid">1.2 幺半群（Monoid）</h2>
 
 <table>
   <thead>
@@ -243,9 +262,9 @@
 结合律：对任何在 M 内的a、b、c ， (a * b ) * c = a * ( b * c ) 
 单位元：存在一在 M 内的元素e，使得任一于 M 内的 a 都会符合 a * e = e * a = a</p>
 
-<h1 id="2-范畴">2. 范畴</h1>
+<h1 id="2-函子">2. 函子</h1>
 
-<p>范畴通俗的说是由一组同类的对象和对象间保持结构不变的态射组成的，态 射具有组合性，两个相邻态射可以组合成一个大的态射，态射的组合操作存在单位元且满足交换律。</p>
+<p>范畴间的态射称 为函子(functor)</p>
 
 
 
