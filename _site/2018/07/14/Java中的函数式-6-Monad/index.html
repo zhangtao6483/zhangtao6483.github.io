@@ -258,9 +258,34 @@
 
 <p>幺半群是一个带有二元运算 *: M × M → M 的集合 M ，其符合下列公理：</p>
 
-<p>封闭性：对任何在 M 内的 a、b，a*b 也会在 M 内。
+<p>封闭性：对任何在 M 内的 a、b，a * b 也会在 M 内。
 结合律：对任何在 M 内的a、b、c ， (a * b ) * c = a * ( b * c ) 
-单位元：存在一在 M 内的元素e，使得任一于 M 内的 a 都会符合 a * e = e * a = a</p>
+单位元(幺元)：存在一在 M 内的元素e，使得任一于 M 内的 a 都会符合 a * e = e * a = a</p>
+
+<p>在Scala中可以使用trait表达</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">trait</span> <span class="nc">Monoid</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
+	<span class="k">def</span> <span class="n">op</span><span class="o">(</span><span class="n">a1</span><span class="k">:</span><span class="kt">A</span><span class="o">,</span> <span class="n">a2</span><span class="k">:</span><span class="kt">A</span><span class="o">)</span><span class="k">:</span> <span class="kt">A</span>		<span class="c1">// 满足op(op(x,y), z) == op(x, op(y,z))
+</span>	<span class="k">def</span> <span class="n">zero</span><span class="k">:</span> <span class="kt">A</span>					<span class="c1">// 满足op(x, zero) == x 和op(zero, x) == x
+</span><span class="o">}</span>
+
+<span class="k">val</span> <span class="n">stringMonoid</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Monoid</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="o">{</span>
+	<span class="k">def</span> <span class="n">op</span><span class="o">(</span><span class="n">a1</span><span class="k">:</span><span class="kt">String</span><span class="o">,</span> <span class="n">a2</span><span class="k">:</span><span class="kt">String</span><span class="o">)</span> <span class="k">=</span> <span class="n">a1</span> <span class="o">+</span> <span class="n">a2</span>
+	<span class="k">def</span> <span class="n">zero</span> <span class="k">=</span> <span class="s">""</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>monoid实际上是类型和定义法则的实例。更准确的是类型A和Monoid[A]实例定义的操作构成了monoid。
+一个monoid是一个类型，一个此类型的二次操作（满足结合律）和一个单位元元素（zero）</p>
+
+<h3 id="121-结合律和并行化">1.2.1 结合律和并行化</h3>
+
+<p>monoid操作的结合律意味着可以自由选择如何进行数据结构的折叠操作，对列表按照顺序向左或向右reduce，甚至可以使用平衡折叠法对列表进行reduce，这样操作可能更有效或更易于并行化</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">op</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">op</span><span class="o">(</span><span class="n">b</span><span class="o">,</span> <span class="n">op</span><span class="o">(</span><span class="n">c</span><span class="o">,</span><span class="n">d</span><span class="o">)))</span>		<span class="c1">// 右折叠
+</span><span class="n">op</span><span class="o">(</span><span class="n">op</span><span class="o">(</span><span class="n">op</span><span class="o">(</span><span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="o">),</span> <span class="n">c</span><span class="o">),</span> <span class="n">d</span><span class="o">)</span>		<span class="c1">// 左折叠
+</span><span class="n">op</span><span class="o">(</span><span class="n">op</span><span class="o">(</span><span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="o">),</span> <span class="n">op</span><span class="o">(</span><span class="n">c</span><span class="o">,</span><span class="n">d</span><span class="o">))</span>		<span class="c1">// 平衡折叠
+</span></code></pre></div></div>
 
 <h2 id="13-初始对象与终极对象">1.3 初始对象与终极对象</h2>
 
@@ -277,10 +302,13 @@
 <p>C 与 D 为范畴，那么函子 F : C → D 会把 C 中的所有对象与态射对应到 D上，并且保留了复合运算与单位元:</p>
 
 <ol>
-  <li>F(f :A → B) = F(f):F(A) → F(B)</li>
+  <li>F(f: A → B) = F(f) : F(A) → F(B)</li>
   <li>F(<strong>1</strong><sub>A</sub>) = <strong>1</strong><sub>F(A)</sub></li>
   <li>F(g◦c f) = F(g)◦<sub>D</sub> F(f)</li>
 </ol>
+
+<p>函子的作用在于，无论何时创建一个类似Functor的抽象，都不仅需要考虑需要实现哪些抽象方法，而且要考虑遵循哪些法则。
+代数推导帮助我们不需要单独测试全部特性。</p>
 
 <ul>
   <li>在Haskell中，以 Maybe 类型为例，对于 Int 类型，我们会得到 Maybe Int 类型，而对于 Int -&gt; Char 的函数，我们可以通过 fmap 得到 Maybe Int -&gt; Maybe Char 类型的函数。</li>
@@ -289,8 +317,33 @@
 fmap (<em>g</em> ◦ <em>f</em>) = (fmap <em>g</em>) ◦ (fmap <em>f</em>)</li>
 </ul>
 
+<p>Scala trait实现map：</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">trait</span> <span class="nc">Functor</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+    <span class="k">def</span> <span class="n">map</span><span class="o">[</span><span class="kt">A</span>,<span class="kt">B</span><span class="o">]</span> <span class="o">(</span><span class="n">fa</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">A</span><span class="o">])(</span><span class="n">f</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=&gt;</span> <span class="n">B</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">B</span><span class="o">]</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>构建List的一个实例</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="n">listFunctor</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Functor</span><span class="o">[</span><span class="kt">List</span><span class="o">]</span> <span class="o">{</span>
+    <span class="k">def</span> <span class="n">map</span><span class="o">[</span><span class="kt">A</span>,<span class="kt">B</span><span class="o">](</span><span class="n">as</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">])(</span><span class="n">f</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=&gt;</span> <span class="n">B</span><span class="o">)</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">B</span><span class="o">]</span> <span class="k">=</span> <span class="n">as</span> <span class="n">map</span> <span class="n">f</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
 <h1 id="3-单子">3. 单子</h1>
 
+<p>A monad is just a monoid in the category of endofunctors（单子不过是自函子范畴上的单位半群）</p>
+
+<p>unit和flatMap作为最小集合</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">trait</span> <span class="nc">Monad</span><span class="o">[</span><span class="kt">F</span><span class="o">[</span><span class="k">_</span><span class="o">]]</span> <span class="o">{</span>
+    <span class="k">def</span> <span class="n">unit</span><span class="o">[</span><span class="kt">A</span><span class="o">](</span><span class="n">a</span><span class="k">:</span> <span class="o">=&gt;</span> <span class="n">A</span><span class="o">)</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span>
+    
+    <span class="k">def</span> <span class="n">flatMap</span><span class="o">[</span><span class="kt">A</span>,<span class="kt">B</span><span class="o">](</span><span class="n">ma</span><span class="k">:</span><span class="kt">F</span><span class="o">[</span><span class="kt">A</span><span class="o">])(</span><span class="n">f</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=&gt;</span> <span class="n">F</span><span class="o">[</span><span class="kt">B</span><span class="o">])</span><span class="k">:</span> <span class="kt">F</span><span class="o">[</span><span class="kt">B</span><span class="o">]</span>
+
+<span class="o">}</span>
+</code></pre></div></div>
 
 
                 <br><br><br><br><br><br>
